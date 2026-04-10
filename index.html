@@ -3,184 +3,166 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gestor Bibliotecario PUCV – OPAC en vivo</title>
+<title>Gestor Bibliotecario PUCV</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Sans+3:wght@300;400;500;600&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg:#0f0d0a; --surface:#1a1712; --card:#221f1a; --border:#3a3228; --border-h:#6b5c44;
-  --gold:#c9a84c; --gold-dim:#8a6f34; --cream:#e8dcc8; --cream-dim:#a89880;
-  --green:#27ae60; --amber:#e67e22; --blue:#2980b9; --red:#c0392b;
-  --text:#e8dcc8; --text-dim:#a89880; --r:6px;
-}
+:root{--bg:#0f0d0a;--surface:#1a1712;--card:#221f1a;--border:#3a3228;--gold:#c9a84c;--gold-dim:#8a6f34;--cream:#e8dcc8;--green:#27ae60;--text:#e8dcc8;--text-dim:#a89880;--r:6px;}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
-
-header{background:#181410;border-bottom:1px solid var(--border);padding:22px 36px;display:flex;align-items:center;gap:16px;}
-header h1{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--gold);}
-header p{font-size:0.82rem;color:var(--text-dim);margin-top:3px;}
-.version{font-family:'Source Code Pro',monospace;font-size:0.7rem;color:var(--gold-dim);background:rgba(201,168,76,.1);border:1px solid var(--gold-dim);padding:3px 10px;border-radius:20px;margin-left:auto;}
-
-.layout{display:flex;min-height:calc(100vh - 74px);}
-
-aside{width:270px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);padding:24px 20px;display:flex;flex-direction:column;gap:24px;}
-.cfg-title{font-family:'Source Code Pro',monospace;font-size:0.68rem;letter-spacing:.12em;color:var(--gold);text-transform:uppercase;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid var(--border);}
-label{display:block;font-size:0.8rem;color:var(--text-dim);margin-bottom:5px;}
-input[type=text],input[type=password]{width:100%;background:var(--card);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:var(--r);font-size:0.82rem;font-family:'Source Code Pro',monospace;}
-input[type=text]:focus,input[type=password]:focus{outline:none;border-color:var(--gold-dim);}
-input[type=text]::placeholder,input[type=password]::placeholder{color:var(--text-dim);font-size:0.75rem;}
-.help-text{font-size:0.73rem;color:var(--text-dim);margin-top:5px;line-height:1.5;}
-.help-text a{color:var(--gold-dim);}
-
-.how-list{list-style:none;font-size:0.79rem;color:var(--text-dim);line-height:1.8;}
-.how-list li::before{content:'→ ';color:var(--gold-dim);}
-
-main{flex:1;padding:28px 32px;overflow-y:auto;}
-
-.drop-zone{border:1.5px dashed var(--border);border-radius:var(--r);padding:24px 20px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;position:relative;background:var(--card);margin-bottom:20px;}
-.drop-zone:hover,.drop-zone.drag{border-color:var(--gold);background:rgba(201,168,76,.04);}
-.drop-zone.loaded{border-color:var(--green);border-style:solid;}
-.drop-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;}
-.dz-icon{font-size:2rem;margin-bottom:8px;}
-.dz-label{font-family:'Playfair Display',serif;font-size:1rem;color:var(--cream);margin-bottom:4px;font-weight:700;}
-.dz-hint{font-size:0.76rem;color:var(--text-dim);}
-.dz-status{margin-top:8px;font-size:0.78rem;font-family:'Source Code Pro',monospace;color:var(--green);min-height:1.2em;}
-
-.col-map{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:20px;display:none;}
-.col-map label{font-size:0.78rem;color:var(--text-dim);margin-bottom:4px;}
-select{background:var(--card);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:var(--r);font-size:0.8rem;width:100%;margin-bottom:10px;font-family:'Source Sans 3',sans-serif;cursor:pointer;}
+body{font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+header{background:#181410;border-bottom:1px solid var(--border);padding:18px 30px;display:flex;align-items:center;gap:14px;}
+header h1{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--gold);}
+header p{font-size:0.79rem;color:var(--text-dim);margin-top:2px;}
+.ver{font-family:'Source Code Pro',monospace;font-size:0.67rem;color:var(--gold-dim);background:rgba(201,168,76,.1);border:1px solid var(--gold-dim);padding:3px 9px;border-radius:20px;margin-left:auto;white-space:nowrap;}
+.layout{display:flex;min-height:calc(100vh - 70px);}
+aside{width:255px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);padding:20px 16px;display:flex;flex-direction:column;gap:20px;}
+.stitle{font-family:'Source Code Pro',monospace;font-size:0.65rem;letter-spacing:.12em;color:var(--gold);text-transform:uppercase;margin-bottom:9px;padding-bottom:5px;border-bottom:1px solid var(--border);}
+label{display:block;font-size:0.77rem;color:var(--text-dim);margin-bottom:4px;}
+input[type=text]{width:100%;background:var(--card);border:1px solid var(--border);color:var(--text);padding:7px 9px;border-radius:var(--r);font-size:0.79rem;font-family:'Source Code Pro',monospace;}
+input[type=text]:focus{outline:none;border-color:var(--gold-dim);}
+.row2{display:flex;align-items:center;gap:8px;margin-top:3px;}
+input[type=range]{flex:1;accent-color:var(--gold);}
+.gv{font-family:'Source Code Pro',monospace;font-size:0.83rem;color:var(--gold);min-width:34px;}
+.help{font-size:0.7rem;color:var(--text-dim);line-height:1.5;margin-top:3px;}
+.hlist{list-style:none;font-size:0.75rem;color:var(--text-dim);line-height:1.9;}
+.hlist li::before{content:'→ ';color:var(--gold-dim);}
+main{flex:1;padding:24px 28px;overflow-y:auto;}
+/* DROP */
+.drop{border:1.5px dashed var(--border);border-radius:var(--r);padding:22px 16px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;position:relative;background:var(--card);margin-bottom:16px;}
+.drop:hover,.drop.drag{border-color:var(--gold);background:rgba(201,168,76,.04);}
+.drop.ok{border-color:var(--green);border-style:solid;}
+.drop input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;}
+.di{font-size:1.8rem;margin-bottom:5px;}
+.dlbl{font-family:'Playfair Display',serif;font-size:.92rem;color:var(--cream);font-weight:700;}
+.dhint{font-size:0.73rem;color:var(--text-dim);margin-top:2px;}
+.dstat{margin-top:6px;font-size:0.74rem;font-family:'Source Code Pro',monospace;color:var(--green);min-height:1em;}
+/* COL MAP */
+.colmap{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px;margin-bottom:16px;display:none;}
+select{background:var(--card);border:1px solid var(--border);color:var(--text);padding:6px 8px;border-radius:var(--r);font-size:0.77rem;width:100%;font-family:'Source Sans 3',sans-serif;cursor:pointer;margin-top:4px;}
 select:focus{outline:none;border-color:var(--gold-dim);}
-
-.btn-primary{width:100%;padding:14px;background:var(--gold);color:#0f0d0a;font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;border:none;border-radius:var(--r);cursor:pointer;letter-spacing:.06em;transition:background .2s;display:none;}
-.btn-primary:hover{background:#d4b060;}
-.btn-primary:disabled{background:var(--border);color:var(--text-dim);cursor:not-allowed;}
-
-.progress-wrap{margin:18px 0;display:none;}
-.prog-bg{background:var(--border);border-radius:4px;height:5px;overflow:hidden;margin-bottom:6px;}
-.prog-fill{height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold));border-radius:4px;transition:width .3s;width:0%;}
-.prog-text{font-size:0.76rem;color:var(--text-dim);font-family:'Source Code Pro',monospace;}
-
-.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
-.metric{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;}
-.m-label{font-size:0.7rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px;}
-.m-val{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;color:var(--gold);}
-.m-sub{font-size:0.72rem;color:var(--green);margin-top:2px;}
-
-.section-title{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--cream);margin-bottom:14px;display:flex;align-items:center;gap:10px;}
-.section-title::after{content:'';flex:1;height:1px;background:var(--border);}
-
-.filters{display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap;align-items:flex-end;}
-.fgroup{display:flex;flex-direction:column;gap:3px;}
-.fgroup label{font-size:0.72rem;color:var(--text-dim);}
-.fgroup select,.fgroup input{background:var(--card);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:var(--r);font-size:0.8rem;font-family:'Source Sans 3',sans-serif;}
-.fgroup input::placeholder{color:var(--text-dim);}
-.fgroup input:focus,.fgroup select:focus{outline:none;border-color:var(--gold-dim);}
-.count-lbl{font-size:0.75rem;color:var(--text-dim);font-family:'Source Code Pro',monospace;padding-bottom:7px;}
-
-.table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:var(--r);}
-table{width:100%;border-collapse:collapse;font-size:0.8rem;}
+.preview{font-size:0.7rem;color:var(--text-dim);margin-top:6px;border-left:2px solid var(--gold-dim);padding-left:7px;line-height:1.5;}
+/* PREVIEW TABLE */
+.ptable-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px;margin-bottom:16px;display:none;}
+.ptable-wrap table{width:100%;border-collapse:collapse;font-size:0.75rem;}
+.ptable-wrap th{color:var(--gold);font-family:'Source Code Pro',monospace;font-size:0.62rem;letter-spacing:.07em;text-transform:uppercase;padding:4px 8px;text-align:left;}
+.ptable-wrap td{padding:4px 8px;color:var(--text-dim);border-top:1px solid var(--border);}
+.ptable-wrap .tc{color:var(--cream);max-width:220px;word-break:break-word;}
+.ptable-wrap .tq{font-family:'Source Code Pro',monospace;color:var(--gold-dim);font-size:0.68rem;}
+/* BUTTONS */
+.btn-row{display:flex;align-items:center;gap:9px;margin-bottom:18px;}
+.btn-p{padding:11px 26px;background:var(--gold);color:#0f0d0a;font-family:'Playfair Display',serif;font-size:.92rem;font-weight:700;border:none;border-radius:var(--r);cursor:pointer;letter-spacing:.04em;transition:background .2s;display:none;}
+.btn-p:hover{background:#d4b060;}
+.btn-p:disabled{background:var(--border);color:var(--text-dim);cursor:not-allowed;}
+.btn-stop{background:rgba(192,57,43,.15);border:1px solid rgba(192,57,43,.4);color:#e74c3c;padding:9px 16px;border-radius:var(--r);font-size:0.78rem;cursor:pointer;display:none;}
+.btn-stop:hover{background:rgba(192,57,43,.25);}
+/* PROGRESS */
+.prog{margin-bottom:16px;display:none;}
+.pbg{background:var(--border);border-radius:4px;height:5px;overflow:hidden;margin-bottom:4px;}
+.pf{height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold));border-radius:4px;transition:width .3s;width:0%;}
+.pt{font-size:0.72rem;color:var(--text-dim);font-family:'Source Code Pro',monospace;}
+/* METRICS */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;}
+.metric{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;}
+.ml{font-size:0.66rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px;}
+.mv{font-family:'Playfair Display',serif;font-size:1.65rem;font-weight:700;color:var(--gold);}
+.ms{font-size:0.68rem;color:var(--green);margin-top:1px;}
+/* TABLE */
+.results{display:none;}
+.stit{font-family:'Playfair Display',serif;font-size:1rem;color:var(--cream);margin-bottom:11px;display:flex;align-items:center;gap:8px;}
+.stit::after{content:'';flex:1;height:1px;background:var(--border);}
+.filters{display:flex;gap:9px;margin-bottom:11px;flex-wrap:wrap;align-items:flex-end;}
+.fg{display:flex;flex-direction:column;gap:3px;}
+.fg label{font-size:0.68rem;color:var(--text-dim);}
+.fg select,.fg input{background:var(--card);border:1px solid var(--border);color:var(--text);padding:5px 8px;border-radius:var(--r);font-size:0.76rem;font-family:'Source Sans 3',sans-serif;}
+.fg input::placeholder{color:var(--text-dim);}
+.fg input:focus,.fg select:focus{outline:none;border-color:var(--gold-dim);}
+.cnt{font-size:0.7rem;color:var(--text-dim);font-family:'Source Code Pro',monospace;padding-bottom:5px;}
+.tw{overflow-x:auto;border:1px solid var(--border);border-radius:var(--r);}
+table{width:100%;border-collapse:collapse;font-size:0.77rem;}
 thead tr{background:#2a251e;border-bottom:2px solid var(--border);}
-th{padding:10px 12px;text-align:left;font-family:'Source Code Pro',monospace;font-size:0.68rem;letter-spacing:.08em;color:var(--gold);white-space:nowrap;cursor:pointer;user-select:none;}
+th{padding:9px 10px;text-align:left;font-family:'Source Code Pro',monospace;font-size:0.63rem;letter-spacing:.07em;color:var(--gold);white-space:nowrap;cursor:pointer;user-select:none;}
 th:hover{color:var(--cream);}
-td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:top;}
+td{padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:top;}
 tr:last-child td{border-bottom:none;}
 tbody tr:hover{background:rgba(201,168,76,.03);}
-
-.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:0.68rem;font-weight:600;font-family:'Source Code Pro',monospace;white-space:nowrap;}
-.b-green{background:rgba(39,174,96,.15);color:#2ecc71;border:1px solid rgba(39,174,96,.3);}
-.b-red{background:rgba(192,57,43,.15);color:#e74c3c;border:1px solid rgba(192,57,43,.3);}
-.b-amber{background:rgba(230,126,34,.15);color:#f39c12;border:1px solid rgba(230,126,34,.3);}
-.b-blue{background:rgba(41,128,185,.15);color:#5dade2;border:1px solid rgba(41,128,185,.3);}
-.b-gray{background:rgba(255,255,255,.06);color:var(--text-dim);border:1px solid var(--border);}
-.b-spin{background:rgba(201,168,76,.1);color:var(--gold);border:1px solid var(--gold-dim);}
-
-.ref-cell{max-width:260px;word-break:break-word;color:var(--cream);}
-.small-mono{font-family:'Source Code Pro',monospace;font-size:0.75rem;}
-.cat-link{color:var(--gold-dim);font-size:0.75rem;text-decoration:none;border-bottom:1px dotted var(--gold-dim);}
-.cat-link:hover{color:var(--gold);}
-
-.dl-row{margin-top:16px;display:flex;justify-content:flex-end;}
-.btn-sec{background:transparent;border:1.5px solid var(--gold-dim);color:var(--gold);padding:9px 22px;border-radius:var(--r);font-family:'Source Sans 3',sans-serif;font-size:0.85rem;font-weight:600;cursor:pointer;transition:background .2s;}
-.btn-sec:hover{background:rgba(201,168,76,.1);}
-
-.results-section{display:none;}
-.empty{text-align:center;padding:50px 20px;color:var(--text-dim);}
-.empty-icon{font-size:3rem;opacity:.35;margin-bottom:12px;}
-
-.alert{padding:10px 14px;border-radius:var(--r);font-size:0.81rem;margin-bottom:12px;display:flex;gap:8px;}
-.a-warn{background:rgba(230,126,34,.1);border:1px solid rgba(230,126,34,.3);color:#f0a050;}
-.a-err{background:rgba(192,57,43,.1);border:1px solid rgba(192,57,43,.3);color:#e74c3c;}
-.a-ok{background:rgba(39,174,96,.1);border:1px solid rgba(39,174,96,.3);color:#2ecc71;}
-.a-info{background:rgba(41,128,185,.1);border:1px solid rgba(41,128,185,.3);color:#5dade2;}
-
-.stop-btn{background:rgba(192,57,43,.15);border:1px solid rgba(192,57,43,.4);color:#e74c3c;padding:8px 18px;border-radius:var(--r);font-size:0.82rem;cursor:pointer;margin-left:12px;display:none;}
-.stop-btn:hover{background:rgba(192,57,43,.25);}
-
-footer{text-align:center;padding:16px;font-size:0.72rem;color:var(--text-dim);border-top:1px solid var(--border);margin-top:30px;font-family:'Source Code Pro',monospace;}
-
-@media(max-width:860px){aside{display:none;}.metrics{grid-template-columns:repeat(2,1fr);}}
-
-.reasoning-cell{font-size:0.73rem;color:var(--text-dim);max-width:220px;word-break:break-word;font-style:italic;}
-.opac-url{font-size:0.72rem;}
-
-.rate-warn{background:rgba(230,126,34,.08);border:1px solid rgba(230,126,34,.2);border-radius:var(--r);padding:10px 14px;font-size:0.78rem;color:#c89040;display:none;margin-bottom:12px;}
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:0.63rem;font-weight:600;font-family:'Source Code Pro',monospace;white-space:nowrap;}
+.b-g{background:rgba(39,174,96,.15);color:#2ecc71;border:1px solid rgba(39,174,96,.3);}
+.b-r{background:rgba(192,57,43,.15);color:#e74c3c;border:1px solid rgba(192,57,43,.3);}
+.b-a{background:rgba(230,126,34,.15);color:#f39c12;border:1px solid rgba(230,126,34,.3);}
+.b-b{background:rgba(41,128,185,.15);color:#5dade2;border:1px solid rgba(41,128,185,.3);}
+.b-s{background:rgba(201,168,76,.1);color:var(--gold);border:1px solid var(--gold-dim);}
+.b-0{background:rgba(255,255,255,.05);color:var(--text-dim);border:1px solid var(--border);}
+.sm{font-family:'Source Code Pro',monospace;font-size:0.7rem;}
+.reftd{max-width:230px;word-break:break-word;color:var(--cream);}
+.qtd{font-family:'Source Code Pro',monospace;font-size:0.68rem;color:var(--gold-dim);max-width:140px;word-break:break-word;}
+a.ol{color:var(--gold-dim);font-size:0.7rem;text-decoration:none;border-bottom:1px dotted var(--gold-dim);}
+a.ol:hover{color:var(--gold);}
+.pgrow{display:flex;justify-content:space-between;align-items:center;margin-top:10px;}
+.bts{background:transparent;border:1.5px solid var(--gold-dim);color:var(--gold);padding:7px 16px;border-radius:var(--r);font-family:'Source Sans 3',sans-serif;font-size:0.8rem;font-weight:600;cursor:pointer;transition:background .2s;}
+.bts:hover{background:rgba(201,168,76,.1);}
+.bts:disabled{border-color:var(--border);color:var(--text-dim);cursor:not-allowed;}
+.pglbl{font-size:0.7rem;color:var(--text-dim);font-family:'Source Code Pro',monospace;}
+.dlrow{margin-top:13px;display:flex;justify-content:flex-end;}
+.alert{padding:8px 12px;border-radius:var(--r);font-size:0.77rem;margin-bottom:10px;display:flex;gap:7px;}
+.a-w{background:rgba(230,126,34,.1);border:1px solid rgba(230,126,34,.3);color:#f0a050;}
+.a-e{background:rgba(192,57,43,.1);border:1px solid rgba(192,57,43,.3);color:#e74c3c;}
+.a-o{background:rgba(39,174,96,.1);border:1px solid rgba(39,174,96,.3);color:#2ecc71;}
+.a-i{background:rgba(41,128,185,.1);border:1px solid rgba(41,128,185,.3);color:#5dade2;}
+.empty{text-align:center;padding:46px 20px;color:var(--text-dim);}
+.ei{font-size:2.6rem;opacity:.3;margin-bottom:9px;}
+footer{text-align:center;padding:13px;font-size:0.68rem;color:var(--text-dim);border-top:1px solid var(--border);margin-top:24px;font-family:'Source Code Pro',monospace;}
+@media(max-width:800px){aside{display:none;}.metrics{grid-template-columns:repeat(2,1fr);}}
 </style>
 </head>
 <body>
 <header>
   <div>
     <h1>📚 Gestor Bibliotecario PUCV</h1>
-    <p>Búsqueda en vivo en el OPAC · Catálogo real y actualizado</p>
+    <p>Búsqueda directa en catálogo · Sin API key · Sin costo</p>
   </div>
-  <span class="version">OPAC Live v3.0</span>
+  <span class="ver">OPAC Direct v3.1</span>
 </header>
 
 <div class="layout">
 <aside>
   <div>
-    <div class="cfg-title">🔑 API Key Anthropic</div>
-    <label for="apiKey">Tu API Key</label>
-    <input type="password" id="apiKey" placeholder="sk-ant-api03-...">
-    <div class="help-text">
-      Necesaria para el análisis inteligente de referencias.<br>
-      Obtén tu key en <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a><br>
-      No se almacena — solo vive en esta pestaña.
-    </div>
-  </div>
-
-  <div>
-    <div class="cfg-title">🔗 OPAC</div>
-    <label for="opacUrl">URL del catálogo</label>
+    <div class="stitle">🔗 Catálogo</div>
+    <label>URL base del OPAC</label>
     <input type="text" id="opacUrl" value="https://catalogo.pucv.cl">
-    <div class="help-text">URL base de tu instancia Koha.</div>
+    <div class="help">No modificar salvo cambio de servidor.</div>
   </div>
-
   <div>
-    <div class="cfg-title">⚙ Opciones</div>
-    <label for="delayMs">Pausa entre consultas (ms)</label>
-    <input type="text" id="delayMs" value="1500" style="width:80px;">
-    <div class="help-text">Evita saturar el OPAC. Mínimo recomendado: 1000 ms.</div>
+    <div class="stitle">⚙ Búsqueda</div>
+    <label>Palabras del título a usar</label>
+    <div class="row2">
+      <input type="range" id="twSlider" min="1" max="4" step="1" value="2">
+      <span class="gv" id="twVal">2</span>
+    </div>
+    <div class="help">Cuántas palabras principales del título incluir en la consulta al OPAC.</div>
+    <label style="margin-top:11px;">Pausa entre consultas (ms)</label>
+    <div class="row2">
+      <input type="range" id="delaySlider" min="500" max="3000" step="100" value="1500">
+      <span class="gv" id="delayVal">1500</span>
+    </div>
+    <div class="help">Evita saturar el servidor. 1500 ms recomendado.</div>
   </div>
-
   <div>
-    <div class="cfg-title">📖 Cómo usar</div>
-    <ul class="how-list">
-      <li>Ingresa tu API Key</li>
-      <li>Sube tu archivo de referencias</li>
+    <div class="stitle">📖 Cómo funciona</div>
+    <ul class="hlist">
+      <li>Sube tu Excel de referencias</li>
       <li>Selecciona la columna correcta</li>
-      <li>Presiona Procesar</li>
-      <li>Descarga el resultado en Excel</li>
+      <li>Revisa la vista previa de búsqueda</li>
+      <li>Inicia — busca en el OPAC real</li>
+      <li>Descarga los resultados en Excel</li>
     </ul>
   </div>
-
   <div>
-    <div class="cfg-title">🔍 Qué detecta</div>
-    <ul class="how-list">
-      <li>Libros en stock real</li>
-      <li>Libros sin stock</li>
-      <li>Artículos (redirige a Scholar)</li>
-      <li>No encontrado en catálogo</li>
+    <div class="stitle">🎨 Estados</div>
+    <ul class="hlist">
+      <li><span style="color:#2ecc71">EN BIBLIOTECA</span> — con ejemplares</li>
+      <li><span style="color:#e74c3c">SIN STOCK</span> — existe, no disponible</li>
+      <li><span style="color:#f39c12">NO ENCONTRADO</span> — no está en catálogo</li>
+      <li><span style="color:#5dade2">ARTÍCULO</span> — enlaza a Scholar</li>
     </ul>
   </div>
 </aside>
@@ -188,406 +170,454 @@ footer{text-align:center;padding:16px;font-size:0.72rem;color:var(--text-dim);bo
 <main>
   <div id="alerts"></div>
 
-  <div class="drop-zone" id="dropRef">
-    <input type="file" id="fileRef" accept=".csv,.xlsx,.xls">
-    <div class="dz-icon">📄</div>
-    <div class="dz-label">Archivo de Referencias</div>
-    <div class="dz-hint">Excel (.xlsx, .xls) o CSV · arrastra o haz click</div>
-    <div class="dz-status" id="statusRef"></div>
+  <div class="drop" id="dropZone">
+    <input type="file" id="fileInput" accept=".csv,.xlsx,.xls">
+    <div class="di">📄</div>
+    <div class="dlbl">Archivo de Referencias</div>
+    <div class="dhint">Excel (.xlsx, .xls) o CSV · arrastra o haz click</div>
+    <div class="dstat" id="dstat"></div>
   </div>
 
-  <div class="col-map" id="colMapSection">
-    <div class="cfg-title" style="margin-bottom:10px;">🗂 Columna de referencias</div>
-    <label for="colSelect">Selecciona la columna que contiene las referencias bibliográficas:</label>
-    <select id="colSelect"></select>
-    <div class="help-text" id="colPreview"></div>
+  <div class="colmap" id="colmap">
+    <div class="stitle" style="margin-bottom:8px;">🗂 Columna de referencias</div>
+    <label>¿Cuál columna contiene las referencias?</label>
+    <select id="colSel"></select>
+    <div class="preview" id="colPreview"></div>
   </div>
 
-  <div class="rate-warn" id="rateWarn">
-    ⚠ Procesando lista larga — esto puede tomar varios minutos. Cada referencia hace una consulta a la API de Claude + una búsqueda en el OPAC.
+  <div class="ptable-wrap" id="ptableWrap">
+    <div class="stit" style="font-size:.88rem;margin-bottom:8px;">🔍 Vista previa — primeras 3 búsquedas</div>
+    <table>
+      <thead><tr><th>Referencia</th><th>Apellido</th><th>Palabras título</th><th>Query OPAC</th></tr></thead>
+      <tbody id="previewBody"></tbody>
+    </table>
   </div>
 
-  <div style="display:flex;align-items:center;margin-bottom:20px;">
-    <button class="btn-primary" id="btnProcesar">🚀 INICIAR PROCESAMIENTO</button>
-    <button class="stop-btn" id="btnStop">⏹ Detener</button>
+  <div class="btn-row">
+    <button class="btn-p" id="btnStart">🚀 BUSCAR EN OPAC</button>
+    <button class="btn-stop" id="btnStop">⏹ Detener</button>
   </div>
 
-  <div class="progress-wrap" id="progressWrap">
-    <div class="prog-bg"><div class="prog-fill" id="progFill"></div></div>
-    <div class="prog-text" id="progText">Iniciando...</div>
+  <div class="prog" id="progWrap">
+    <div class="pbg"><div class="pf" id="pFill"></div></div>
+    <div class="pt" id="pTxt">Iniciando...</div>
   </div>
 
-  <div class="results-section" id="resultsSection">
+  <div class="results" id="results">
     <div class="metrics" id="metricsGrid"></div>
-
-    <div class="section-title">📋 Resultados</div>
-
+    <div class="stit">📋 Resultados</div>
     <div class="filters">
-      <div class="fgroup">
-        <label>Estado</label>
-        <select id="fEst"><option value="">Todos</option></select>
-      </div>
-      <div class="fgroup">
-        <label>Tipo</label>
-        <select id="fTip"><option value="">Todos</option></select>
-      </div>
-      <div class="fgroup">
-        <label>Buscar</label>
-        <input type="text" id="fSearch" placeholder="Texto de la referencia...">
-      </div>
-      <div class="fgroup" style="justify-content:flex-end;">
-        <span class="count-lbl" id="cntLbl"></span>
-      </div>
+      <div class="fg"><label>Estado</label><select id="fEst"><option value="">Todos</option></select></div>
+      <div class="fg"><label>Buscar</label><input type="text" id="fSearch" placeholder="Texto..." style="width:180px;"></div>
+      <div class="fg" style="justify-content:flex-end;"><span class="cnt" id="cntLbl"></span></div>
     </div>
-
-    <div class="table-wrap">
+    <div class="tw">
       <table>
         <thead>
           <tr>
             <th>#</th>
-            <th onclick="srt('Referencia Original')">REFERENCIA</th>
-            <th onclick="srt('Estado')">ESTADO</th>
-            <th onclick="srt('Stock')">STOCK</th>
-            <th onclick="srt('Título encontrado')">TÍTULO EN CATÁLOGO</th>
-            <th onclick="srt('Autor encontrado')">AUTOR</th>
-            <th>TIPO</th>
-            <th>ENLACE OPAC</th>
+            <th onclick="srt('ref')">REFERENCIA</th>
+            <th onclick="srt('estado')">ESTADO</th>
+            <th onclick="srt('ejemplares')">EJEM.</th>
+            <th onclick="srt('titulo')">TÍTULO EN CATÁLOGO</th>
+            <th>QUERY</th>
+            <th>OPAC</th>
           </tr>
         </thead>
         <tbody id="tbody"></tbody>
       </table>
     </div>
-
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;">
-      <div style="display:flex;gap:8px;">
-        <button class="btn-sec" onclick="prevPage()" id="btnPrev">← Anterior</button>
-        <button class="btn-sec" onclick="nextPage()" id="btnNext">Siguiente →</button>
+    <div class="pgrow">
+      <div style="display:flex;gap:7px;">
+        <button class="bts" onclick="prevPage()" id="btnPrev">← Anterior</button>
+        <button class="bts" onclick="nextPage()" id="btnNext">Siguiente →</button>
       </div>
-      <span id="pageLbl" style="font-size:0.77rem;color:var(--text-dim);font-family:'Source Code Pro',monospace;"></span>
+      <span class="pglbl" id="pageLbl"></span>
     </div>
-
-    <div class="dl-row">
-      <button class="btn-sec" id="btnDl">📥 Descargar Excel</button>
+    <div class="dlrow">
+      <button class="bts" id="btnDl">📥 Descargar Excel</button>
     </div>
   </div>
 
   <div class="empty" id="emptyState">
-    <div class="empty-icon">📭</div>
-    <p>Sube tu archivo de referencias para comenzar.</p>
+    <div class="ei">📭</div>
+    <p>Sube tu Excel de referencias para comenzar.</p>
   </div>
 
-  <footer>Gestor Bibliotecario PUCV · OPAC Live v3.0 · Búsqueda en tiempo real en catalogo.pucv.cl</footer>
+  <footer>Gestor Bibliotecario PUCV · OPAC Direct v3.1 · catalogo.pucv.cl · Sin API key</footer>
 </main>
 </div>
 
 <script>
-// ── STATE ──────────────────────────────────────────────
-let rawData = [], allResults = [], filtered = [], sortKey = null, sortDir = 1, page = 0;
-const PAGE = 50;
-let stopFlag = false;
+// ── CONFIG ────────────────────────────────────────────
+const PROXY = 'https://api.allorigins.win/get?url=';
+const STOPWORDS = new Set(['de','del','la','el','los','las','un','una','y','en','con','por','para','al','a','e','o','i','es','su','se','que','lo','le','si','no','ya','vol','ed','edition','edicion','primera','segunda','tercera','cuarta','quinta','sexta','septima','octava','novena','decima','ediciones','editorial','editores']);
 
-// ── FILE LOAD ──────────────────────────────────────────
-const drop = document.getElementById('dropRef');
-const fileInput = document.getElementById('fileRef');
-fileInput.addEventListener('change', e => handleFile(e.target.files[0]));
-drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('drag'); });
-drop.addEventListener('dragleave', () => drop.classList.remove('drag'));
-drop.addEventListener('drop', e => { e.preventDefault(); drop.classList.remove('drag'); handleFile(e.dataTransfer.files[0]); });
+// ── STATE ─────────────────────────────────────────────
+let rawData=[], allResults=[], filtered=[], sortKey=null, sortDir=1, page=0, stopFlag=false;
+const PAGE=50;
 
-function handleFile(file) {
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    try {
-      const wb = XLSX.read(e.target.result, { type: 'binary' });
-      const ws = wb.Sheets[wb.SheetNames[0]];
-      rawData = XLSX.utils.sheet_to_json(ws, { defval: '' });
-      drop.classList.add('loaded');
-      document.getElementById('statusRef').textContent = `✓ ${file.name} · ${rawData.length} filas`;
+// ── SLIDERS ───────────────────────────────────────────
+document.getElementById('twSlider').addEventListener('input',function(){document.getElementById('twVal').textContent=this.value;updatePreviewTable();});
+document.getElementById('delaySlider').addEventListener('input',function(){document.getElementById('delayVal').textContent=this.value;});
+
+// ── FILE LOAD ─────────────────────────────────────────
+const dropZone=document.getElementById('dropZone');
+const fileInput=document.getElementById('fileInput');
+fileInput.addEventListener('change',e=>handleFile(e.target.files[0]));
+dropZone.addEventListener('dragover',e=>{e.preventDefault();dropZone.classList.add('drag');});
+dropZone.addEventListener('dragleave',()=>dropZone.classList.remove('drag'));
+dropZone.addEventListener('drop',e=>{e.preventDefault();dropZone.classList.remove('drag');handleFile(e.dataTransfer.files[0]);});
+
+function handleFile(file){
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const wb=XLSX.read(e.target.result,{type:'binary'});
+      const ws=wb.Sheets[wb.SheetNames[0]];
+      rawData=XLSX.utils.sheet_to_json(ws,{defval:''});
+      dropZone.classList.add('ok');
+      document.getElementById('dstat').textContent=`✓ ${file.name} · ${rawData.length} filas`;
       buildColSelector();
-    } catch(err) { showAlert('err', 'Error leyendo archivo: ' + err.message); }
+    }catch(err){showAlert('e','Error leyendo archivo: '+err.message);}
   };
   reader.readAsBinaryString(file);
 }
 
-function buildColSelector() {
-  if (!rawData.length) return;
-  const cols = Object.keys(rawData[0]);
-  const sel = document.getElementById('colSelect');
-  sel.innerHTML = cols.map(c => `<option value="${c}">${c}</option>`).join('');
-
-  // Auto-detect best column
-  const auto = cols.find(c => /ref|bib|tit|cit|libro|obra/i.test(c)) || cols[0];
-  sel.value = auto;
-  updatePreview();
-
-  document.getElementById('colMapSection').style.display = 'block';
-  document.getElementById('btnProcesar').style.display = 'block';
-  document.getElementById('emptyState').style.display = 'none';
-
-  if (rawData.length > 30) document.getElementById('rateWarn').style.display = 'block';
+function buildColSelector(){
+  if(!rawData.length)return;
+  const cols=Object.keys(rawData[0]);
+  const sel=document.getElementById('colSel');
+  sel.innerHTML=cols.map(c=>`<option value="${escH(c)}">${escH(c)}</option>`).join('');
+  const auto=cols.find(c=>/ref|bib|tit|cit|libro|obra/i.test(c))||cols[0];
+  sel.value=auto;
+  document.getElementById('colmap').style.display='block';
+  document.getElementById('btnStart').style.display='inline-block';
+  document.getElementById('emptyState').style.display='none';
+  updateColPreview();
+  updatePreviewTable();
 }
 
-document.getElementById('colSelect').addEventListener('change', updatePreview);
-function updatePreview() {
-  const col = document.getElementById('colSelect').value;
-  const sample = rawData.slice(0,3).map(r => `"${String(r[col]).slice(0,80)}"`).join('<br>');
-  document.getElementById('colPreview').innerHTML = `<strong>Muestra:</strong><br>${sample}`;
+document.getElementById('colSel').addEventListener('change',()=>{updateColPreview();updatePreviewTable();});
+
+function updateColPreview(){
+  const col=document.getElementById('colSel').value;
+  const sample=rawData.slice(0,2).map(r=>String(r[col]).slice(0,70)).join(' / ');
+  document.getElementById('colPreview').textContent=sample;
 }
 
-// ── MAIN PROCESSING ────────────────────────────────────
-document.getElementById('btnProcesar').addEventListener('click', startProcessing);
-document.getElementById('btnStop').addEventListener('click', () => { stopFlag = true; });
+// ── REFERENCE PARSER ──────────────────────────────────
+function parseRef(ref){
+  const s=String(ref||'').trim();
 
-async function startProcessing() {
-  const apiKey = document.getElementById('apiKey').value.trim();
-  const opacBase = document.getElementById('opacUrl').value.trim().replace(/\/$/, '');
-  const col = document.getElementById('colSelect').value;
-  const delay = Math.max(500, parseInt(document.getElementById('delayMs').value) || 1500);
+  // Detect article
+  const isArticle=/journal|revista|doi\.org|issn|transactions|proceedings|vol\.|pp\.|issue|quarterly/i.test(s);
 
-  if (!apiKey) { showAlert('err', '❌ Ingresa tu API Key de Anthropic para continuar.'); return; }
-  if (!rawData.length) { showAlert('err', '❌ No hay datos cargados.'); return; }
+  // Extract surname: first token before comma OR first word
+  let surname='';
+  const commaMatch=s.match(/^([A-Za-záéíóúÁÉÍÓÚüÜñÑ\-]+)\s*,/);
+  if(commaMatch) surname=commaMatch[1];
+  else { const w=s.match(/^([A-Za-záéíóúÁÉÍÓÚüÜñÑ\-]+)/); if(w) surname=w[1]; }
 
+  // Extract title: text between first closing paren (year) and next period OR all after colon
+  let title='';
+  // Strategy 1: after (YYYY). Title.
+  const yearMatch=s.match(/\(\d{4}\)\s*\.?\s*([^.]+)/);
+  if(yearMatch) title=yearMatch[1].trim();
+  // Strategy 2: if no year paren, take text after first ". " that looks like a title
+  if(!title){
+    const dotMatch=s.match(/\.\s+([A-ZÁÉÍÓÚ][^.]+)/);
+    if(dotMatch) title=dotMatch[1].trim();
+  }
+  // Fallback: use whole string
+  if(!title) title=s;
+
+  // Clean title and extract N meaningful words
+  const nWords=parseInt(document.getElementById('twSlider').value)||2;
+  const titleWords=normalizar(title)
+    .split(/\s+/)
+    .filter(w=>w.length>2 && !STOPWORDS.has(w) && !/^\d+$/.test(w))
+    .slice(0,nWords);
+
+  return {surname, titleWords, isArticle, raw:s};
+}
+
+function normalizar(t){
+  return String(t||'')
+    .normalize('NFKD').replace(/[\u0300-\u036f]/g,'')
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g,' ')
+    .replace(/\s+/g,' ').trim();
+}
+
+function buildQuery(parsed){
+  const parts=[];
+  if(parsed.surname) parts.push(parsed.surname);
+  parts.push(...parsed.titleWords);
+  return parts.join('+');
+}
+
+function buildOpacUrl(query){
+  const base=document.getElementById('opacUrl').value.trim().replace(/\/$/,'');
+  return `${base}/cgi-bin/koha/opac-search.pl?q=${encodeURIComponent(query.replace(/\+/g,' '))}&idx=kw&sort_by=relevance`;
+}
+
+// ── PREVIEW TABLE ─────────────────────────────────────
+function updatePreviewTable(){
+  const col=document.getElementById('colSel').value;
+  if(!rawData.length||!col)return;
+  const wrap=document.getElementById('ptableWrap');
+  const tbody=document.getElementById('previewBody');
+  const sample=rawData.slice(0,3);
+  tbody.innerHTML=sample.map(row=>{
+    const ref=String(row[col]||'');
+    const p=parseRef(ref);
+    const q=buildQuery(p);
+    return `<tr>
+      <td class="tc">${escH(ref.slice(0,60))}${ref.length>60?'…':''}</td>
+      <td class="tq">${escH(p.surname)}</td>
+      <td class="tq">${escH(p.titleWords.join(', '))}</td>
+      <td class="tq">${escH(q)}</td>
+    </tr>`;
+  }).join('');
+  wrap.style.display='block';
+}
+
+// ── MAIN SEARCH ───────────────────────────────────────
+document.getElementById('btnStart').addEventListener('click', startSearch);
+document.getElementById('btnStop').addEventListener('click',()=>{stopFlag=true;});
+
+async function startSearch(){
+  const col=document.getElementById('colSel').value;
+  const delay=parseInt(document.getElementById('delaySlider').value)||1500;
+  if(!rawData.length){showAlert('e','No hay datos cargados.');return;}
   clearAlerts();
-  stopFlag = false;
-  allResults = [];
-  document.getElementById('btnProcesar').disabled = true;
-  document.getElementById('btnStop').style.display = 'inline-block';
-  document.getElementById('progressWrap').style.display = 'block';
-  document.getElementById('resultsSection').style.display = 'none';
+  stopFlag=false;
+  allResults=[];
+  document.getElementById('btnStart').disabled=true;
+  document.getElementById('btnStop').style.display='inline-block';
+  document.getElementById('progWrap').style.display='block';
+  document.getElementById('results').style.display='none';
 
-  const total = rawData.length;
+  const total=rawData.length;
 
-  for (let i = 0; i < total; i++) {
-    if (stopFlag) {
-      showAlert('warn', `⏹ Procesamiento detenido en referencia ${i} de ${total}.`);
-      break;
+  for(let i=0;i<total;i++){
+    if(stopFlag){showAlert('w',`⏹ Detenido en ${i} de ${total}.`);break;}
+
+    const ref=String(rawData[i][col]||'').trim();
+    const pct=Math.round(((i+1)/total)*100);
+    document.getElementById('pFill').style.width=pct+'%';
+    document.getElementById('pTxt').textContent=`Referencia ${i+1} / ${total} — ${escH(ref.slice(0,50))}...`;
+
+    // Push placeholder
+    allResults.push({idx:i+1,ref,estado:'⏳ Buscando...',ejemplares:'–',titulo:'',query:'',opacUrl:'',obs:''});
+    if(i===0)renderAll();
+
+    let res;
+    try{
+      const parsed=parseRef(ref);
+      if(parsed.isArticle){
+        res={estado:'ARTÍCULO CIENTÍFICO',ejemplares:0,titulo:'',query:'',opacUrl:`https://scholar.google.com/scholar?q=${encodeURIComponent(ref)}`,obs:'Posible artículo/revista científica'};
+      } else {
+        const q=buildQuery(parsed);
+        const opacUrl=buildOpacUrl(q);
+        res=await searchOpac(q,opacUrl,parsed);
+      }
+    }catch(err){
+      res={estado:'ERROR',ejemplares:0,titulo:'',query:'',opacUrl:'',obs:String(err.message).slice(0,100)};
     }
 
-    const ref = String(rawData[i][col] || '').trim();
-    const pct = Math.round(((i + 1) / total) * 100);
-    document.getElementById('progFill').style.width = pct + '%';
-    document.getElementById('progText').textContent = `Referencia ${i + 1} / ${total} — ${pct}%`;
-
-    // Placeholder row while processing
-    allResults.push({ idx: i, 'Referencia Original': ref, Estado: '⏳ Procesando...', Stock: '–', 'Título encontrado': '', 'Autor encontrado': '', Tipo: '', 'URL OPAC': '', Observaciones: '' });
-    if (i === 0) renderAll();
-
-    let resultado;
-    try {
-      resultado = await consultarOPAC(ref, opacBase, apiKey);
-    } catch(err) {
-      resultado = { Estado: 'ERROR', Stock: 0, 'Título encontrado': '', 'Autor encontrado': '', Tipo: 'Libro', 'URL OPAC': '', Observaciones: String(err.message).slice(0, 120) };
-    }
-
-    allResults[i] = { idx: i + 1, 'Referencia Original': ref, ...resultado };
+    allResults[i]={idx:i+1,ref,...res};
     renderAll();
 
-    if (i < total - 1) await sleep(delay);
+    if(i<total-1) await sleep(delay);
   }
 
-  document.getElementById('btnProcesar').disabled = false;
-  document.getElementById('btnStop').style.display = 'none';
-  document.getElementById('progressWrap').style.display = 'none';
-  showAlert('ok', `✅ Proceso completado. ${allResults.length} referencias analizadas.`);
+  document.getElementById('btnStart').disabled=false;
+  document.getElementById('btnStop').style.display='none';
+  document.getElementById('progWrap').style.display='none';
+  showAlert('o',`✅ Completado. ${allResults.length} referencias procesadas.`);
 }
 
-async function consultarOPAC(referencia, opacBase, apiKey) {
-  const systemPrompt = `Eres un asistente especialista en bibliotecología y referencias bibliográficas.
-Tu tarea es:
-1. Analizar la referencia bibliográfica recibida y extraer: título del libro y autor principal.
-2. Buscar el libro en el OPAC de la PUCV usando web_search con el titulo y autor extraídos.
-   - La URL base del OPAC es: ${opacBase}
-   - La URL de búsqueda de Koha es: ${opacBase}/cgi-bin/koha/opac-search.pl?q=PALABRAS_CLAVE
-   - Siempre busca con: site:${opacBase.replace('https://','').replace('http://','')} TITULO AUTOR
-3. Determina si el libro está en el catálogo, y si tiene ejemplares disponibles (stock).
-4. Responde SOLO con un JSON válido, sin texto adicional, sin markdown, sin backticks:
-{
-  "titulo_extraido": "...",
-  "autor_extraido": "...",
-  "es_articulo": false,
-  "encontrado": true,
-  "titulo_catalogo": "...",
-  "autor_catalogo": "...",
-  "stock": 2,
-  "url_opac": "https://...",
-  "estado": "EN BIBLIOTECA",
-  "observaciones": "..."
+async function searchOpac(query, opacUrl, parsed){
+  const proxyUrl=PROXY+encodeURIComponent(opacUrl);
+  const resp=await fetch(proxyUrl,{headers:{'Accept':'application/json'}});
+  if(!resp.ok) throw new Error(`Proxy HTTP ${resp.status}`);
+  const data=await resp.json();
+  const html=data.contents||'';
+  return parseKohaHtml(html, query, opacUrl, parsed);
 }
-Estados posibles: "EN BIBLIOTECA", "FALTANTE (Stock 0)", "NO ENCONTRADO", "VERIFICAR ONLINE" (para artículos).
-Si es artículo científico (journal, revista, doi, pp., vol., proceedings), marca es_articulo: true y estado: "VERIFICAR ONLINE".
-Si no se encuentra, stock: 0, encontrado: false.`;
 
-  const userMsg = `Referencia a buscar: "${referencia}"`;
+function parseKohaHtml(html, query, opacUrl, parsed){
+  const parser=new DOMParser();
+  const doc=parser.parseFromString(html,'text/html');
 
-  const body = {
-    model: 'claude-sonnet-4-20250514',
-    max_tokens: 1000,
-    system: systemPrompt,
-    tools: [{ type: 'web_search_20250305', name: 'web_search' }],
-    messages: [{ role: 'user', content: userMsg }]
-  };
+  // Check for no results
+  const noResults=doc.querySelector('.span12.browse-msg, #noresults, .noResultsFound');
+  const resultText=doc.body?doc.body.textContent:'';
 
-  const resp = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-beta': 'interleaved-thinking-2025-05-14' },
-    body: JSON.stringify(body)
-  });
+  // Count results
+  const resultCountEl=doc.querySelector('.numresults, #numresults, .results_summary .count');
+  const resultCountText=resultCountEl?resultCountEl.textContent:'';
+  const countMatch=resultCountText.match(/(\d+)/);
+  const resultCount=countMatch?parseInt(countMatch[1]):0;
 
-  if (!resp.ok) {
-    const errData = await resp.json().catch(() => ({}));
-    throw new Error(errData?.error?.message || `HTTP ${resp.status}`);
+  // No results check
+  if(noResults||resultText.includes('No se encontraron')||resultText.includes('No results')||
+     (resultCount===0 && (resultText.includes('result')||resultText.includes('resultado')))){
+    return{estado:'NO ENCONTRADO',ejemplares:0,titulo:'',query,opacUrl,obs:'Sin resultados en el catálogo'};
   }
 
-  const data = await resp.json();
+  // Extract first result title
+  const titleEl=doc.querySelector('.title a, .biblioTitle a, h3.title a, a.title');
+  const titulo=titleEl?titleEl.textContent.trim():'';
 
-  // Extract text from all content blocks
-  const textBlocks = (data.content || []).filter(b => b.type === 'text').map(b => b.text);
-  const fullText = textBlocks.join('\n');
+  // Extract availability
+  // Koha shows availability in spans/divs with class "available", "checkedout", etc.
+  const availEl=doc.querySelector('.item-status .available, .availableItems, span.available');
+  const unavailEl=doc.querySelector('.item-status .checkedout, .unavailableItems, span.unavailable, span.checkedout');
 
-  // Parse JSON from response
-  const jsonMatch = fullText.match(/\{[\s\S]*\}/);
-  if (!jsonMatch) throw new Error('Respuesta sin JSON válido');
+  // Count available items
+  const availItems=doc.querySelectorAll('.item-status .available, .status.available, td.available');
+  const unavailItems=doc.querySelectorAll('.item-status .checkedout, .status.checkedout, td.checkedout, td.Checked\\ out');
 
-  const parsed = JSON.parse(jsonMatch[0]);
-  return {
-    Estado: parsed.estado || 'NO ENCONTRADO',
-    Stock: typeof parsed.stock === 'number' ? parsed.stock : 0,
-    'Título encontrado': parsed.titulo_catalogo || parsed.titulo_extraido || '',
-    'Autor encontrado': parsed.autor_catalogo || parsed.autor_extraido || '',
-    Tipo: parsed.es_articulo ? 'Artículo Científico' : 'Libro',
-    'URL OPAC': parsed.url_opac || '',
-    Observaciones: parsed.observaciones || ''
-  };
+  let ejemplares=availItems.length;
+
+  // If we can't parse individual items, check for availability text
+  if(ejemplares===0 && titulo){
+    if(resultText.includes('Available')||resultText.includes('Disponible')||resultText.includes('En estante')){
+      ejemplares=1; // At least one available
+    }
+  }
+
+  // Determine estado
+  let estado;
+  if(!titulo && resultCount===0){
+    estado='NO ENCONTRADO';
+    ejemplares=0;
+  } else if(ejemplares>0){
+    estado='EN BIBLIOTECA';
+  } else if(titulo){
+    // Found but check availability text
+    if(resultText.match(/\d+\s*(cop|item|ejemplar)/i)){
+      const numMatch=resultText.match(/(\d+)\s*(cop|item|ejemplar)/i);
+      if(numMatch) ejemplares=parseInt(numMatch[1]);
+      estado=ejemplares>0?'EN BIBLIOTECA':'SIN STOCK';
+    } else {
+      // Has results but can't determine availability → link to OPAC for manual check
+      estado='VER EN OPAC';
+      ejemplares=0;
+    }
+  } else {
+    estado='NO ENCONTRADO';
+  }
+
+  // Get direct link to first result
+  const directLink=titleEl?titleEl.getAttribute('href'):'';
+  const finalUrl=directLink?(document.getElementById('opacUrl').value.trim().replace(/\/$/,'')+directLink):opacUrl;
+
+  return{estado,ejemplares,titulo,query,opacUrl:finalUrl,obs:resultCount>0?`${resultCount} resultado(s) en catálogo`:'Sin resultados'};
 }
 
-function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
 
-// ── RENDER ─────────────────────────────────────────────
-function renderAll() {
-  const section = document.getElementById('resultsSection');
-  section.style.display = 'block';
+// ── RENDER ────────────────────────────────────────────
+function renderAll(){
+  document.getElementById('results').style.display='block';
+  const done=allResults.filter(r=>r.estado!=='⏳ Buscando...');
+  const total=done.length;
+  const enBib=done.filter(r=>r.ejemplares>0).length;
+  const noEnc=done.filter(r=>r.estado==='NO ENCONTRADO').length;
+  const arts=done.filter(r=>r.estado==='ARTÍCULO CIENTÍFICO').length;
 
-  const done = allResults.filter(r => r.Estado !== '⏳ Procesando...');
-  const total = done.length;
-  const enBib = done.filter(r => r.Stock > 0).length;
-  const cotizar = done.filter(r => r.Estado === 'NO ENCONTRADO').length;
-  const articulos = done.filter(r => r.Tipo === 'Artículo Científico').length;
+  document.getElementById('metricsGrid').innerHTML=[
+    {l:'📚 Total',v:allResults.length,s:''},
+    {l:'✅ En Biblioteca',v:enBib,s:total?Math.round(enBib/total*100)+'%':''},
+    {l:'❓ No Encontrado',v:noEnc,s:''},
+    {l:'📄 Artículos',v:arts,s:''},
+  ].map(m=>`<div class="metric"><div class="ml">${m.l}</div><div class="mv">${m.v}</div>${m.s?`<div class="ms">${m.s}</div>`:''}</div>`).join('');
 
-  document.getElementById('metricsGrid').innerHTML = [
-    { l: '📚 Total', v: allResults.length, s: '' },
-    { l: '✅ En Biblioteca', v: enBib, s: total ? Math.round(enBib/total*100) + '%' : '' },
-    { l: '❓ No Encontrado', v: cotizar, s: '' },
-    { l: '📄 Artículos', v: articulos, s: '' },
-  ].map(m => `<div class="metric"><div class="m-label">${m.l}</div><div class="m-val">${m.v}</div>${m.s ? `<div class="m-sub">${m.s}</div>` : ''}</div>`).join('');
-
-  // Fill filters
-  const estados = [...new Set(allResults.map(r => r.Estado).filter(e => e !== '⏳ Procesando...'))];
-  const tipos   = [...new Set(allResults.map(r => r.Tipo).filter(Boolean))];
-  const fe = document.getElementById('fEst');
-  const ft = document.getElementById('fTip');
-  const curEst = fe.value, curTip = ft.value;
-  fe.innerHTML = '<option value="">Todos los estados</option>' + estados.map(e => `<option ${e===curEst?'selected':''}>${e}</option>`).join('');
-  ft.innerHTML = '<option value="">Todos los tipos</option>'  + tipos.map(t => `<option ${t===curTip?'selected':''}>${t}</option>`).join('');
-
+  const estados=[...new Set(allResults.map(r=>r.estado).filter(e=>e!=='⏳ Buscando...'))];
+  const fe=document.getElementById('fEst');
+  const cur=fe.value;
+  fe.innerHTML='<option value="">Todos los estados</option>'+estados.map(e=>`<option ${e===cur?'selected':''}>${escH(e)}</option>`).join('');
   applyFilters();
 }
 
-function applyFilters() {
-  const est = document.getElementById('fEst').value;
-  const tip = document.getElementById('fTip').value;
-  const srch = document.getElementById('fSearch').value.toLowerCase();
-  filtered = allResults.filter(r =>
-    (!est || r.Estado === est) &&
-    (!tip || r.Tipo === tip) &&
-    (!srch || r['Referencia Original'].toLowerCase().includes(srch))
-  );
-  page = 0;
-  renderTable();
+function applyFilters(){
+  const est=document.getElementById('fEst').value;
+  const srch=document.getElementById('fSearch').value.toLowerCase();
+  filtered=allResults.filter(r=>(!est||r.estado===est)&&(!srch||r.ref.toLowerCase().includes(srch)));
+  page=0; renderTable();
 }
-['fEst','fTip'].forEach(id => document.getElementById(id).addEventListener('change', applyFilters));
-document.getElementById('fSearch').addEventListener('input', applyFilters);
+['fEst'].forEach(id=>document.getElementById(id).addEventListener('change',applyFilters));
+document.getElementById('fSearch').addEventListener('input',applyFilters);
 
-function srt(key) {
-  if (sortKey === key) sortDir *= -1; else { sortKey = key; sortDir = 1; }
-  filtered.sort((a,b) => {
-    const av = a[key], bv = b[key];
-    if (typeof av === 'number') return (av - bv) * sortDir;
-    return String(av).localeCompare(String(bv)) * sortDir;
+function srt(key){
+  if(sortKey===key)sortDir*=-1; else{sortKey=key;sortDir=1;}
+  const keyMap={ref:'ref',estado:'estado',ejemplares:'ejemplares',titulo:'titulo'};
+  filtered.sort((a,b)=>{
+    const av=a[keyMap[key]],bv=b[keyMap[key]];
+    if(typeof av==='number')return(av-bv)*sortDir;
+    return String(av).localeCompare(String(bv))*sortDir;
   });
-  page = 0; renderTable();
+  page=0; renderTable();
 }
 
-function renderTable() {
-  const start = page * PAGE;
-  const slice = filtered.slice(start, start + PAGE);
-  const total = filtered.length;
+function renderTable(){
+  const start=page*PAGE;
+  const slice=filtered.slice(start,start+PAGE);
+  const total=filtered.length;
+  document.getElementById('cntLbl').textContent=`Mostrando ${start+1}–${Math.min(start+PAGE,total)} de ${total}`;
+  document.getElementById('pageLbl').textContent=`Pág. ${page+1}/${Math.max(1,Math.ceil(total/PAGE))}`;
+  document.getElementById('btnPrev').disabled=page===0;
+  document.getElementById('btnNext').disabled=start+PAGE>=total;
 
-  document.getElementById('cntLbl').textContent = `Mostrando ${start+1}–${Math.min(start+PAGE, total)} de ${total}`;
-  document.getElementById('pageLbl').textContent = `Página ${page+1} de ${Math.max(1, Math.ceil(total/PAGE))}`;
-  document.getElementById('btnPrev').disabled = page === 0;
-  document.getElementById('btnNext').disabled = start + PAGE >= total;
-
-  const badgeMap = {
-    'EN BIBLIOTECA':      'b-green',
-    'FALTANTE (Stock 0)': 'b-red',
-    'NO ENCONTRADO':      'b-amber',
-    'VERIFICAR ONLINE':   'b-blue',
-    'ERROR':              'b-red',
-    '⏳ Procesando...':   'b-spin',
-  };
-
-  document.getElementById('tbody').innerHTML = slice.map(r => {
-    const cls = badgeMap[r.Estado] || 'b-gray';
-    const link = r['URL OPAC'] ? `<a href="${escH(r['URL OPAC'])}" target="_blank" class="cat-link opac-url">Ver en OPAC</a>` : '';
-    return `<tr>
-      <td class="small-mono" style="color:var(--text-dim)">${r.idx}</td>
-      <td class="ref-cell">${escH(r['Referencia Original'])}</td>
-      <td><span class="badge ${cls}">${escH(r.Estado)}</span></td>
-      <td class="small-mono">${r.Stock === '–' ? '–' : r.Stock}</td>
-      <td style="max-width:200px;word-break:break-word">${escH(r['Título encontrado'])}</td>
-      <td style="max-width:140px;word-break:break-word;font-size:0.78rem">${escH(r['Autor encontrado'])}</td>
-      <td class="small-mono">${escH(r.Tipo)}</td>
+  const bmap={'EN BIBLIOTECA':'b-g','SIN STOCK':'b-r','NO ENCONTRADO':'b-a','VER EN OPAC':'b-b','ARTÍCULO CIENTÍFICO':'b-b','ERROR':'b-r','⏳ Buscando...':'b-s'};
+  document.getElementById('tbody').innerHTML=slice.map(r=>{
+    const bc=bmap[r.estado]||'b-0';
+    const link=r.opacUrl?`<a href="${escH(r.opacUrl)}" target="_blank" class="ol">↗ Ver</a>`:'';
+    return`<tr>
+      <td class="sm" style="color:var(--text-dim)">${r.idx}</td>
+      <td class="reftd">${escH(r.ref)}</td>
+      <td><span class="badge ${bc}">${escH(r.estado)}</span></td>
+      <td class="sm">${r.ejemplares==='–'?'–':r.ejemplares}</td>
+      <td style="max-width:200px;word-break:break-word;font-size:0.75rem">${escH(r.titulo)}</td>
+      <td class="qtd">${escH(r.query)}</td>
       <td>${link}</td>
     </tr>`;
   }).join('');
 }
 
-function prevPage() { if (page > 0) { page--; renderTable(); } }
-function nextPage() { if ((page+1)*PAGE < filtered.length) { page++; renderTable(); } }
+function prevPage(){if(page>0){page--;renderTable();}}
+function nextPage(){if((page+1)*PAGE<filtered.length){page++;renderTable();}}
 
-// ── DOWNLOAD ───────────────────────────────────────────
-document.getElementById('btnDl').addEventListener('click', () => {
-  const exportData = allResults.map(r => ({
-    '#': r.idx,
-    'Referencia Original': r['Referencia Original'],
-    'Estado': r.Estado,
-    'Stock': r.Stock,
-    'Título en Catálogo': r['Título encontrado'],
-    'Autor en Catálogo': r['Autor encontrado'],
-    'Tipo': r.Tipo,
-    'URL OPAC': r['URL OPAC'],
-    'Observaciones': r.Observaciones,
+// ── DOWNLOAD ──────────────────────────────────────────
+document.getElementById('btnDl').addEventListener('click',()=>{
+  const data=allResults.map(r=>({
+    '#':r.idx,'Referencia Original':r.ref,'Estado':r.estado,
+    'Ejemplares':r.ejemplares,'Título en Catálogo':r.titulo,
+    'Query utilizada':r.query,'URL OPAC':r.opacUrl,'Observaciones':r.obs
   }));
-  const ws = XLSX.utils.json_to_sheet(exportData);
-  ws['!cols'] = [{wch:4},{wch:55},{wch:22},{wch:7},{wch:40},{wch:28},{wch:18},{wch:50},{wch:40}];
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Resultados OPAC');
-  const ts = new Date().toISOString().slice(0,10).replace(/-/g,'');
-  XLSX.writeFile(wb, `Resultados_OPAC_PUCV_${ts}.xlsx`);
+  const ws=XLSX.utils.json_to_sheet(data);
+  ws['!cols']=[{wch:4},{wch:55},{wch:22},{wch:9},{wch:40},{wch:22},{wch:50},{wch:35}];
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'Resultados OPAC');
+  XLSX.writeFile(wb,`Resultados_OPAC_PUCV_${new Date().toISOString().slice(0,10).replace(/-/g,'')}.xlsx`);
 });
 
-// ── ALERTS ─────────────────────────────────────────────
-function showAlert(type, msg) {
-  const map = { err:'a-err', warn:'a-warn', ok:'a-ok', info:'a-info' };
-  const d = document.createElement('div');
-  d.className = `alert ${map[type]||'a-info'}`;
-  d.innerHTML = `<span>${msg}</span>`;
+// ── ALERTS ────────────────────────────────────────────
+function showAlert(type,msg){
+  const map={e:'a-e',w:'a-w',o:'a-o',i:'a-i'};
+  const d=document.createElement('div');
+  d.className=`alert ${map[type]||'a-i'}`;
+  d.innerHTML=`<span>${msg}</span>`;
   document.getElementById('alerts').appendChild(d);
-  if (type !== 'err') setTimeout(() => d.remove(), 8000);
+  if(type!=='e')setTimeout(()=>d.remove(),7000);
 }
-function clearAlerts() { document.getElementById('alerts').innerHTML = ''; }
-function escH(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function clearAlerts(){document.getElementById('alerts').innerHTML='';}
+function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 </script>
 </body>
 </html>
