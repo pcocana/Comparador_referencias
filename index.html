@@ -283,7 +283,8 @@ footer{text-align:center;padding:13px;font-size:0.67rem;color:var(--text-dim);bo
 // ══════════════════════════════════════════════════════
 // CONSTANTES
 // ══════════════════════════════════════════════════════
-const STOP = new Set(['de','del','la','el','los','las','un','una','y','en','con','por','para','al','a','e','o','es','su','se','que','lo','le','si','no','vol','ed','eds','edicion','edition','primera','segunda','tercera','cuarta','quinta','sexta','septima','octava','novena','decima','editorial','editores','cengage','learning','mcgraw','hill','pearson','limusa','alfaomega','graw','mc','sa','soc','chile','mexico','barcelona','colombia','argentina','impa','ediciones','universidad','catolica','valparaiso','pontificia','pucv','ucv','gestion','reverte','thomson','springer','addison','wiley','potenciando','pensamiento','critico','traves','coleccion','matemática','matematica']);
+const STOP = new Set(['de','del','la','el','los','las','un','una','y','en','con','por','para','al','a','e','o','es','su','se','que','lo','le','si','no','vol','ed','eds','edicion','edition','primera','segunda','tercera','cuarta','quinta','sexta','septima','octava','novena','decima','editorial','editores','cengage','learning','mcgraw','hill','pearson','limusa','alfaomega','graw','mc','sa','soc','chile','mexico','barcelona','colombia','argentina','impa','ediciones','universidad','catolica','valparaiso','pontificia','pucv','ucv','gestion','reverte','thomson','springer','addison','wiley','potenciando','pensamiento','critico','traves','coleccion','matematica']);
+const CONNECTORS = new Set(['y','and','et','von','van','de','del','la','los','las']);
 
 const THRESHOLD = 60;
 const PAGE = 100;
@@ -310,48 +311,54 @@ function norm(t) {
 // ══════════════════════════════════════════════════════
 function parseRef(ref) {
   const s = String(ref || '').trim();
-
-  // Artículo científico
   const isArticle = /journal|revista|doi\.org|issn|transactions|proceedings|vol\.|pp\.|issue|quarterly/i.test(s);
 
-  // Apellido: primer token antes de coma o punto+coma
-  let surname = '';
-  const mSn = s.match(/^([A-Za-záéíóúÁÉÍÓÚüÜñÑ\-]+)\s*[,;]/);
-  if (mSn) surname = norm(mSn[1]);
-
-  // Extraer texto del título: después del año
-  let titleText = '';
-  const mYear = s.match(/\(\s*\d{4}\s*\)\.?\s*([\s\S]*)/);
+  // ── Separar sección de autores y título ──────────────
+  let authorsSection = s, titleText = '';
+  const mYear = s.match(/\(\s*\d{4}\s*\)(\.?\s*)([\s\S]*)/);
   if (mYear) {
-    titleText = mYear[1];
+    // Con año entre paréntesis: autores = antes del año, título = después
+    authorsSection = s.slice(0, s.indexOf(mYear[0]));
+    titleText = mYear[3];
   } else {
-    // Sin año en paréntesis: saltar sección de autores (todo antes de la primera palabra larga en mayúscula)
-    const mDot = s.match(/\.\s+([A-ZÁÉÍÓÚ][a-záéíóúA-ZÁÉÍÓÚ]{2,}[\s\S]*)/);
-    if (mDot) titleText = mDot[1];
-    else titleText = s;
+    // Sin año entre paréntesis: encontrar el último "I. " (inicial + punto + espacio)
+    // que precede al título — ej: "Spivak, M. Calculus." → autores = "Spivak, M."
+    const initials = [...s.matchAll(/\b[A-Z]\.\s+(?=[A-ZÁÉÍÓÚ][a-záéíóú]{2,})/g)];
+    if (initials.length > 0) {
+      const last = initials[initials.length - 1];
+      authorsSection = s.slice(0, last.index + last[0].length);
+      titleText = s.slice(last.index + last[0].length);
+    } else {
+      const mDot = s.match(/\.\s+([A-ZÁÉÍÓÚ].+)/s);
+      if (mDot) { authorsSection = s.slice(0, s.indexOf(mDot[0])); titleText = mDot[1]; }
+      else titleText = s;
+    }
   }
 
-  // Limpiar texto del título
+  // ── Extraer TODOS los apellidos de la sección de autores ──
+  const surnames = [], seenSn = new Set();
+  for (const [, w] of authorsSection.matchAll(/\b([A-ZÁÉÍÓÚÑ][a-záéíóúñ]{2,})\b/g)) {
+    const n = norm(w);
+    if (!CONNECTORS.has(n) && !seenSn.has(n)) { surnames.push(n); seenSn.add(n); }
+  }
+
+  // ── Limpiar y extraer palabras clave del título ──────
   titleText = titleText
-    .replace(/\b\d{4}\b/g, ' ')                        // años sueltos
-    .replace(/\b\d+\s*[vaeoaº°]+\.?\b/gi, ' ')         // ediciones (8va, 3a, etc.)
-    .replace(/\b[A-Z]\.\s*/g, ' ')                      // iniciales
-    .replace(/([a-záéíóúA-ZÁÉÍÓÚ])(\d)/g, '$1 $2')    // "Cálculo1" → "Cálculo 1"
+    .replace(/\b\d{4}\b/g, ' ')
+    .replace(/\b\d+\s*[vaeoaº°]+\.?\b/gi, ' ')
+    .replace(/\b[A-Z]\.\s*/g, ' ')
+    .replace(/([a-záéíóúA-ZÁÉÍÓÚ])(\d)/g, '$1 $2')
     .replace(/(\d)([a-záéíóúA-ZÁÉÍÓÚ])/g, '$1 $2');
 
-  // Extraer palabras clave
-  const words = norm(titleText).split(/\s+/);
-  const tw = [];
-  const seen = new Set();
-  for (const w of words) {
-    if (w.length > 2 && !STOP.has(w) && !/^\d+$/.test(w) && w !== surname && !seen.has(w)) {
-      tw.push(w);
-      seen.add(w);
+  const tw = [], seenTw = new Set();
+  for (const w of norm(titleText).split(/\s+/)) {
+    if (w.length > 2 && !STOP.has(w) && !/^\d+$/.test(w) && !seenSn.has(w) && !seenTw.has(w)) {
+      tw.push(w); seenTw.add(w);
       if (tw.length >= 5) break;
     }
   }
 
-  return { surname, tw, isArticle };
+  return { surnames, tw, isArticle };
 }
 
 // ══════════════════════════════════════════════════════
@@ -375,36 +382,34 @@ function buildCatalogIndex(data, colTit, colAut, colEjem) {
 // ══════════════════════════════════════════════════════
 // SCORING
 // ══════════════════════════════════════════════════════
-function scoreMatch(refSn, refTw, entry) {
-  // Puntaje de autor
+function scoreMatch(refSurnames, refTw, entry) {
+  // Mejor match entre TODOS los apellidos y el primer apellido del autor catálogo
   let authorSc = 0;
-  if (refSn && entry.naSn) {
-    if (refSn === entry.naSn) authorSc = 50;
-    else if (refSn.includes(entry.naSn) || entry.naSn.includes(refSn)) authorSc = 25;
+  for (const sn of refSurnames) {
+    let sc = 0;
+    if (sn === entry.naSn) sc = 50;
+    else if (entry.naSn && (sn.includes(entry.naSn) || entry.naSn.includes(sn))) sc = 25;
+    if (sc > authorSc) authorSc = sc;
   }
 
-  // Puntaje de título
+  // Título
   let titleSc = 0, hits = 0;
   for (const w of refTw) {
-    if (entry.tw.has(w)) {
-      hits++;
-      titleSc += w.length > 6 ? 25 : 15;
-    }
+    if (entry.tw.has(w)) { hits++; titleSc += w.length > 6 ? 25 : 15; }
   }
 
   let total = authorSc + titleSc;
+  // Penalizar si NINGÚN apellido de la referencia coincidió
+  if (refSurnames.length > 0 && authorSc === 0 && entry.naSn) total -= 30;
 
-  // Penalizar mismatch de autor
-  if (refSn && authorSc === 0 && entry.naSn) total -= 30;
-
-  return { total, hits };
+  return { total, hits, authorSc };
 }
 
 // ══════════════════════════════════════════════════════
 // MATCH PRINCIPAL
 // ══════════════════════════════════════════════════════
 function matchReference(ref, catIndex) {
-  const { surname, tw, isArticle } = parseRef(ref);
+  const { surnames, tw, isArticle } = parseRef(ref);
 
   if (isArticle) {
     return {
@@ -415,16 +420,17 @@ function matchReference(ref, catIndex) {
     };
   }
 
-  let bestTotal = -999, bestHits = 0, bestEntry = null;
+  let bestTotal = -999, bestHits = 0, bestAuth = 0, bestEntry = null;
   for (const entry of catIndex) {
-    const { total, hits } = scoreMatch(surname, tw, entry);
+    const { total, hits, authorSc } = scoreMatch(surnames, tw, entry);
     if (total > bestTotal || (total === bestTotal && hits > bestHits)) {
-      bestTotal = total; bestHits = hits; bestEntry = entry;
+      bestTotal = total; bestHits = hits; bestAuth = authorSc; bestEntry = entry;
     }
   }
 
-  // Regla de hits mínimos: si hay 3+ palabras clave disponibles, exigir 2 hits
-  const minHits = tw.length >= 3 ? 2 : 1;
+  // Si el autor hace match exacto (50 pts), basta 1 hit de título
+  // Si no, con 3+ palabras clave exigir 2 hits para evitar falsos positivos
+  const minHits = bestAuth === 50 ? 1 : (tw.length >= 3 ? 2 : 1);
   const found = bestTotal >= THRESHOLD && bestHits >= minHits;
 
   if (found && bestEntry) {
@@ -513,10 +519,10 @@ function updatePreview() {
   const tbody = document.getElementById('previewBody');
   tbody.innerHTML = dataRef.slice(0, 3).map(row => {
     const ref = String(row[col] || '');
-    const { surname, tw } = parseRef(ref);
+    const { surnames, tw } = parseRef(ref);
     return `<tr>
       <td class="tc">${escH(ref.slice(0, 55))}${ref.length > 55 ? '…' : ''}</td>
-      <td class="tq">${escH(surname)}</td>
+      <td class="tq">${escH(surnames.slice(0,2).join(', '))}</td>
       <td class="tq">${escH(tw.join(', '))}</td>
     </tr>`;
   }).join('');
