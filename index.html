@@ -15,17 +15,11 @@ header h1{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--gold
 header p{font-size:0.79rem;color:var(--text-dim);margin-top:2px;}
 .ver{font-family:'Source Code Pro',monospace;font-size:0.67rem;color:var(--gold-dim);background:rgba(201,168,76,.1);border:1px solid var(--gold-dim);padding:3px 9px;border-radius:20px;margin-left:auto;}
 .layout{display:flex;min-height:calc(100vh - 70px);}
-/* SIDEBAR */
 aside{width:250px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);padding:20px 16px;display:flex;flex-direction:column;gap:20px;}
 .stitle{font-family:'Source Code Pro',monospace;font-size:0.64rem;letter-spacing:.12em;color:var(--gold);text-transform:uppercase;margin-bottom:9px;padding-bottom:5px;border-bottom:1px solid var(--border);}
 .hlist{list-style:none;font-size:0.75rem;color:var(--text-dim);line-height:1.9;}
 .hlist li::before{content:'→ ';color:var(--gold-dim);}
-.hlist .st-g{color:#2ecc71;}
-.hlist .st-r{color:#e74c3c;}
-.hlist .st-a{color:#f39c12;}
-/* MAIN */
-main{flex:1;padding:24px 28px;overflow-y:auto;max-width:1200px;}
-/* DROP ZONES */
+main{flex:1;padding:24px 28px;overflow-y:auto;}
 .upload-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;}
 .drop{border:1.5px dashed var(--border);border-radius:var(--r);padding:20px 14px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;position:relative;background:var(--card);}
 .drop:hover,.drop.drag{border-color:var(--gold);background:rgba(201,168,76,.04);}
@@ -35,38 +29,31 @@ main{flex:1;padding:24px 28px;overflow-y:auto;max-width:1200px;}
 .dlbl{font-family:'Playfair Display',serif;font-size:.88rem;color:var(--cream);font-weight:700;}
 .dhint{font-size:0.71rem;color:var(--text-dim);margin-top:2px;}
 .dstat{margin-top:6px;font-size:0.73rem;font-family:'Source Code Pro',monospace;color:var(--green);min-height:1em;}
-/* COL MAP */
-.colmap{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px;margin-bottom:16px;display:none;}
+.colmap{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px;margin-bottom:14px;display:none;}
 label{display:block;font-size:0.76rem;color:var(--text-dim);margin-bottom:3px;}
 select{background:var(--card);border:1px solid var(--border);color:var(--cream);padding:6px 8px;border-radius:var(--r);font-size:0.76rem;width:100%;font-family:'Source Sans 3',sans-serif;cursor:pointer;margin-top:3px;}
 select:focus{outline:none;border-color:var(--gold-dim);}
 .preview{font-size:0.69rem;color:var(--text-dim);margin-top:6px;border-left:2px solid var(--gold-dim);padding-left:7px;line-height:1.5;}
-/* PREVIEW TABLE */
-.ptw{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:11px;margin-bottom:16px;display:none;overflow-x:auto;}
+.ptw{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:11px;margin-bottom:14px;display:none;overflow-x:auto;}
 .ptw table{width:100%;border-collapse:collapse;font-size:0.72rem;}
 .ptw th{color:var(--gold);font-family:'Source Code Pro',monospace;font-size:0.6rem;letter-spacing:.07em;text-transform:uppercase;padding:4px 7px;text-align:left;}
 .ptw td{padding:4px 7px;color:var(--text-dim);border-top:1px solid var(--border);}
 .ptw .tc{color:var(--cream);max-width:200px;word-break:break-word;}
 .ptw .tq{font-family:'Source Code Pro',monospace;color:var(--gold-dim);font-size:0.67rem;}
-/* BUTTONS */
 .btn-row{display:flex;align-items:center;gap:9px;margin-bottom:18px;}
 .btn-p{padding:11px 26px;background:var(--gold);color:#0f0d0a;font-family:'Playfair Display',serif;font-size:.92rem;font-weight:700;border:none;border-radius:var(--r);cursor:pointer;letter-spacing:.04em;transition:background .2s;display:none;}
 .btn-p:hover{background:#d4b060;}
 .btn-p:disabled{background:var(--border);color:var(--text-dim);cursor:not-allowed;}
 .btn-stop{background:rgba(192,57,43,.15);border:1px solid rgba(192,57,43,.4);color:#e74c3c;padding:9px 16px;border-radius:var(--r);font-size:0.77rem;cursor:pointer;display:none;}
-.btn-stop:hover{background:rgba(192,57,43,.25);}
-/* PROGRESS */
 .prog{margin-bottom:16px;display:none;}
 .pbg{background:var(--border);border-radius:4px;height:5px;overflow:hidden;margin-bottom:4px;}
-.pf{height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold));border-radius:4px;transition:width .15s;width:0%;}
+.pf{height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold));border-radius:4px;width:0%;}
 .pt{font-size:0.71rem;color:var(--text-dim);font-family:'Source Code Pro',monospace;}
-/* METRICS */
 .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;}
 .metric{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;}
 .ml{font-size:0.65rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px;}
 .mv{font-family:'Playfair Display',serif;font-size:1.65rem;font-weight:700;color:var(--gold);}
 .ms{font-size:0.67rem;color:var(--green);margin-top:1px;}
-/* TABLE */
 .results{display:none;}
 .stit{font-family:'Playfair Display',serif;font-size:1rem;color:var(--cream);margin-bottom:11px;display:flex;align-items:center;gap:8px;}
 .stit::after{content:'';flex:1;height:1px;background:var(--border);}
@@ -78,7 +65,7 @@ select:focus{outline:none;border-color:var(--gold-dim);}
 .fg input:focus,.fg select:focus{outline:none;border-color:var(--gold-dim);}
 .cnt{font-size:0.7rem;color:var(--text-dim);font-family:'Source Code Pro',monospace;padding-bottom:5px;}
 .tw{overflow-x:auto;border:1px solid var(--border);border-radius:var(--r);}
-table{width:100%;border-collapse:collapse;font-size:0.77rem;}
+table.rt{width:100%;border-collapse:collapse;font-size:0.77rem;}
 thead tr{background:#2a251e;border-bottom:2px solid var(--border);}
 th{padding:9px 10px;text-align:left;font-family:'Source Code Pro',monospace;font-size:0.62rem;letter-spacing:.07em;color:var(--gold);white-space:nowrap;cursor:pointer;user-select:none;}
 th:hover{color:var(--cream);}
@@ -114,56 +101,52 @@ footer{text-align:center;padding:13px;font-size:0.67rem;color:var(--text-dim);bo
 <header>
   <div>
     <h1>📚 Gestor Bibliotecario PUCV</h1>
-    <p>Match inteligente referencias ↔ catálogo · Normalización bibliográfica automática</p>
+    <p>Match inteligente referencias ↔ catálogo · Sin internet · Sin API key</p>
   </div>
-  <span class="ver">v4.0 Smart Match</span>
+  <span class="ver">v4.1</span>
 </header>
-
 <div class="layout">
 <aside>
   <div>
     <div class="stitle">📖 Instrucciones</div>
     <ul class="hlist">
-      <li>Sube tu Excel de <strong>Referencias</strong></li>
-      <li>Sube el Excel del <strong>Catálogo</strong></li>
-      <li>Selecciona la columna correcta</li>
-      <li>Revisa la vista previa</li>
+      <li>Sube Excel de <strong>Referencias</strong></li>
+      <li>Sube Excel del <strong>Catálogo</strong></li>
+      <li>Selecciona las columnas correctas</li>
       <li>Presiona <strong>Procesar</strong></li>
-      <li>Descarga el resultado</li>
+      <li>Descarga el resultado en Excel</li>
     </ul>
   </div>
   <div>
     <div class="stitle">🎨 Estados</div>
     <ul class="hlist">
-      <li><span class="st-g">EN BIBLIOTECA</span> — con ejemplares</li>
-      <li><span class="st-r">SIN STOCK</span> — existe, sin copias</li>
-      <li><span class="st-a">NO ENCONTRADO</span> — no está en catálogo</li>
+      <li><span style="color:#2ecc71">EN BIBLIOTECA</span> — con ejemplares</li>
+      <li><span style="color:#e74c3c">SIN STOCK</span> — existe, sin copias</li>
+      <li><span style="color:#f39c12">NO ENCONTRADO</span> — no en catálogo</li>
       <li><span style="color:#5dade2">ARTÍCULO</span> — redirige a Scholar</li>
     </ul>
   </div>
   <div>
-    <div class="stitle">🔍 Cómo funciona el match</div>
+    <div class="stitle">🔍 Algoritmo</div>
     <ul class="hlist">
-      <li>Extrae apellido del 1er autor</li>
+      <li>Extrae todos los apellidos de la ref.</li>
       <li>Aísla el título (separa autores, año, editorial)</li>
-      <li>Normaliza: sin tildes, minúsculas</li>
-      <li>Puntúa por coincidencia de autor y palabras del título</li>
+      <li>Normaliza sin tildes ni mayúsculas</li>
+      <li>Puntúa por autor + palabras del título</li>
+      <li>Prueba todos los co-autores</li>
       <li>Penaliza mismatch de autor</li>
-      <li>Exige mínimo 2 hits si hay 3+ palabras clave</li>
     </ul>
   </div>
   <div>
-    <div class="stitle">📌 Formatos</div>
+    <div class="stitle">📌 Formatos aceptados</div>
     <ul class="hlist">
       <li>Excel (.xlsx, .xls)</li>
       <li>CSV (.csv)</li>
     </ul>
   </div>
 </aside>
-
 <main>
   <div id="alerts"></div>
-
   <div class="upload-grid">
     <div class="drop" id="dropRef">
       <input type="file" id="fileRef" accept=".csv,.xlsx,.xls">
@@ -180,78 +163,55 @@ footer{text-align:center;padding:13px;font-size:0.67rem;color:var(--text-dim);bo
       <div class="dstat" id="statCat"></div>
     </div>
   </div>
-
   <div class="colmap" id="colmapRef">
     <div class="stitle" style="margin-bottom:8px;">🗂 Columna de referencias</div>
     <label>Columna con las referencias bibliográficas:</label>
     <select id="colRef"></select>
     <div class="preview" id="prevRef"></div>
   </div>
-
-  <div class="colmap" id="colmapCat" style="margin-top:-8px;">
+  <div class="colmap" id="colmapCat">
     <div class="stitle" style="margin-bottom:8px;">🗂 Columnas del catálogo</div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
-      <div>
-        <label>Título:</label>
-        <select id="colTit"></select>
-      </div>
-      <div>
-        <label>Autor:</label>
-        <select id="colAut"></select>
-      </div>
-      <div>
-        <label>Ejemplares:</label>
-        <select id="colEjem"></select>
-      </div>
+      <div><label>Título:</label><select id="colTit"></select></div>
+      <div><label>Autor:</label><select id="colAut"></select></div>
+      <div><label>Ejemplares:</label><select id="colEjem"></select></div>
     </div>
   </div>
-
   <div class="ptw" id="ptableWrap">
     <div class="stit" style="font-size:.86rem;margin-bottom:8px;">🔍 Vista previa del parsing (primeras 3 referencias)</div>
     <table>
-      <thead><tr><th>Referencia</th><th>Apellido</th><th>Palabras clave extraídas</th></tr></thead>
+      <thead><tr><th>Referencia</th><th>Apellidos extraídos</th><th>Palabras clave del título</th></tr></thead>
       <tbody id="previewBody"></tbody>
     </table>
   </div>
-
   <div class="btn-row">
     <button class="btn-p" id="btnStart">⚡ PROCESAR REFERENCIAS</button>
     <button class="btn-stop" id="btnStop">⏹ Detener</button>
   </div>
-
   <div class="prog" id="progWrap">
     <div class="pbg"><div class="pf" id="pFill"></div></div>
     <div class="pt" id="pTxt">Procesando...</div>
   </div>
-
   <div class="results" id="results">
     <div class="metrics" id="metricsGrid"></div>
     <div class="stit">📋 Resultados</div>
     <div class="filters">
-      <div class="fg">
-        <label>Estado</label>
-        <select id="fEst"><option value="">Todos</option></select>
-      </div>
-      <div class="fg">
-        <label>Buscar texto</label>
-        <input type="text" id="fSearch" placeholder="Referencia o título..." style="width:200px;">
-      </div>
-      <div class="fg" style="justify-content:flex-end;">
-        <span class="cnt" id="cntLbl"></span>
-      </div>
+      <div class="fg"><label>Estado</label><select id="fEst"><option value="">Todos</option></select></div>
+      <div class="fg"><label>Buscar texto</label><input type="text" id="fSearch" placeholder="Referencia o título..." style="width:200px;"></div>
+      <div class="fg" style="justify-content:flex-end;"><span class="cnt" id="cntLbl"></span></div>
     </div>
     <div class="tw">
-      <table>
+      <table class="rt">
         <thead>
           <tr>
             <th>#</th>
-            <th onclick="srt('ref')">REFERENCIA ORIGINAL ▾</th>
+            <th onclick="srt('ref')">REFERENCIA ORIGINAL</th>
             <th onclick="srt('estado')">ESTADO</th>
             <th onclick="srt('ejemplares')">EJEM.</th>
             <th onclick="srt('titulo_cat')">TÍTULO EN CATÁLOGO</th>
             <th onclick="srt('autor_cat')">AUTOR CATÁLOGO</th>
             <th onclick="srt('score')">SCORE</th>
-            <th>OBSERVACIONES</th>
+            <th>OBS.</th>
           </tr>
         </thead>
         <tbody id="tbody"></tbody>
@@ -269,461 +229,336 @@ footer{text-align:center;padding:13px;font-size:0.67rem;color:var(--text-dim);bo
       <button class="bts" id="btnDlNoEnc">📥 Solo no encontrados</button>
     </div>
   </div>
-
   <div class="empty" id="emptyState">
     <div class="ei">📭</div>
     <p>Sube ambos archivos para comenzar.</p>
   </div>
-
-  <footer>Gestor Bibliotecario PUCV · v4.0 Smart Match · Normalización bibliográfica inteligente</footer>
+  <footer>Gestor Bibliotecario PUCV · v4.1 · Procesamiento local · Sin internet requerido</footer>
 </main>
 </div>
 
 <script>
-// ══════════════════════════════════════════════════════
-// CONSTANTES
-// ══════════════════════════════════════════════════════
-const STOP = new Set(['de','del','la','el','los','las','un','una','y','en','con','por','para','al','a','e','o','es','su','se','que','lo','le','si','no','vol','ed','eds','edicion','edition','primera','segunda','tercera','cuarta','quinta','sexta','septima','octava','novena','decima','editorial','editores','cengage','learning','mcgraw','hill','pearson','limusa','alfaomega','graw','mc','sa','soc','chile','mexico','barcelona','colombia','argentina','impa','ediciones','universidad','catolica','valparaiso','pontificia','pucv','ucv','gestion','reverte','thomson','springer','addison','wiley','potenciando','pensamiento','critico','traves','coleccion','matematica']);
-const CONNECTORS = new Set(['y','and','et','von','van','de','del','la','los','las']);
+var STOP = {de:1,del:1,la:1,el:1,los:1,las:1,un:1,una:1,y:1,en:1,con:1,por:1,para:1,al:1,a:1,e:1,o:1,es:1,su:1,se:1,que:1,lo:1,le:1,si:1,no:1,vol:1,ed:1,eds:1,edicion:1,edition:1,primera:1,segunda:1,tercera:1,cuarta:1,quinta:1,sexta:1,septima:1,octava:1,novena:1,decima:1,editorial:1,editores:1,cengage:1,learning:1,mcgraw:1,hill:1,pearson:1,limusa:1,alfaomega:1,graw:1,mc:1,sa:1,soc:1,chile:1,mexico:1,barcelona:1,colombia:1,argentina:1,impa:1,ediciones:1,universidad:1,catolica:1,valparaiso:1,pontificia:1,pucv:1,ucv:1,gestion:1,reverte:1,thomson:1,springer:1,addison:1,wiley:1,potenciando:1,pensamiento:1,critico:1,traves:1,coleccion:1,matematica:1};
+var CONN = {y:1,and:1,et:1,von:1,van:1,de:1,del:1,la:1,los:1,las:1};
+var THRESHOLD = 60;
+var PAGE = 100;
+var dataRef=[], dataCat=[], allResults=[], filtered=[];
+var sortKey=null, sortDir=1, pg=0, stopFlag=false;
 
-const THRESHOLD = 60;
-const PAGE = 100;
-
-// ══════════════════════════════════════════════════════
-// ESTADO GLOBAL
-// ══════════════════════════════════════════════════════
-let dataRef = [], dataCat = [], allResults = [], filtered = [];
-let sortKey = null, sortDir = 1, page = 0, stopFlag = false;
-
-// ══════════════════════════════════════════════════════
-// NORMALIZACIÓN
-// ══════════════════════════════════════════════════════
 function norm(t) {
   if (!t) return '';
   return String(t).toLowerCase()
-    .normalize('NFKD').replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9\s]/g, ' ')
-    .replace(/\s+/g, ' ').trim();
+    .normalize('NFKD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim();
 }
 
-// ══════════════════════════════════════════════════════
-// PARSER DE REFERENCIAS
-// ══════════════════════════════════════════════════════
 function parseRef(ref) {
-  const s = String(ref || '').trim();
-  const isArticle = /journal|revista|doi\.org|issn|transactions|proceedings|vol\.|pp\.|issue|quarterly/i.test(s);
+  var s = String(ref||'').trim();
+  var isArticle = /journal|revista|doi\.org|issn|transactions|proceedings|vol\.|pp\.|issue|quarterly/i.test(s);
+  var authSec='', titleText='';
 
-  // ── Separar sección de autores y título ──────────────
-  let authorsSection = s, titleText = '';
-  const mYear = s.match(/\(\s*\d{4}\s*\)(\.?\s*)([\s\S]*)/);
-  if (mYear) {
-    // Con año entre paréntesis: autores = antes del año, título = después
-    authorsSection = s.slice(0, s.indexOf(mYear[0]));
-    titleText = mYear[3];
+  // Separar autores del título usando el año como frontera
+  var ym = s.match(/\(\s*\d{4}\s*\)/);
+  if (ym) {
+    var yi = s.indexOf(ym[0]);
+    authSec = s.slice(0, yi);
+    titleText = s.slice(yi + ym[0].length).replace(/^\s*\.?\s*/,'');
   } else {
-    // Sin año entre paréntesis: encontrar el último "I. " (inicial + punto + espacio)
-    // que precede al título — ej: "Spivak, M. Calculus." → autores = "Spivak, M."
-    const initials = [...s.matchAll(/\b[A-Z]\.\s+(?=[A-ZÁÉÍÓÚ][a-záéíóú]{2,})/g)];
-    if (initials.length > 0) {
-      const last = initials[initials.length - 1];
-      authorsSection = s.slice(0, last.index + last[0].length);
-      titleText = s.slice(last.index + last[0].length);
+    // Sin año entre paréntesis: autores terminan en el último "Inicial. Palabra"
+    var re = /\b[A-Z]\.\s+/g, m, lastEnd = -1;
+    while ((m = re.exec(s)) !== null) {
+      var after = s.slice(m.index + m[0].length);
+      if (/^[A-ZÁÉÍÓÚ][a-záéíóú]{2,}/.test(after)) lastEnd = m.index + m[0].length;
+    }
+    if (lastEnd > 0) {
+      authSec = s.slice(0, lastEnd);
+      titleText = s.slice(lastEnd);
     } else {
-      const mDot = s.match(/\.\s+([A-ZÁÉÍÓÚ].+)/s);
-      if (mDot) { authorsSection = s.slice(0, s.indexOf(mDot[0])); titleText = mDot[1]; }
-      else titleText = s;
+      var dm = s.match(/\.\s+([A-ZÁÉÍÓÚ].+)/);
+      if (dm) { authSec = s.slice(0, s.indexOf(dm[0])); titleText = dm[1]; }
+      else { authSec=''; titleText=s; }
     }
   }
 
-  // ── Extraer TODOS los apellidos de la sección de autores ──
-  const surnames = [], seenSn = new Set();
-  for (const [, w] of authorsSection.matchAll(/\b([A-ZÁÉÍÓÚÑ][a-záéíóúñ]{2,})\b/g)) {
-    const n = norm(w);
-    if (!CONNECTORS.has(n) && !seenSn.has(n)) { surnames.push(n); seenSn.add(n); }
+  // Extraer todos los apellidos de la sección de autores
+  var surnames=[], seenSn={};
+  var snRe = /\b([A-ZÁÉÍÓÚÑ][a-záéíóúñ]{2,})\b/g, snM;
+  while ((snM = snRe.exec(authSec)) !== null) {
+    var n = norm(snM[1]);
+    if (!CONN[n] && !seenSn[n]) { surnames.push(n); seenSn[n]=1; }
   }
 
-  // ── Limpiar y extraer palabras clave del título ──────
+  // Limpiar título y extraer palabras clave
   titleText = titleText
-    .replace(/\b\d{4}\b/g, ' ')
-    .replace(/\b\d+\s*[vaeoaº°]+\.?\b/gi, ' ')
-    .replace(/\b[A-Z]\.\s*/g, ' ')
-    .replace(/([a-záéíóúA-ZÁÉÍÓÚ])(\d)/g, '$1 $2')
-    .replace(/(\d)([a-záéíóúA-ZÁÉÍÓÚ])/g, '$1 $2');
+    .replace(/\b\d{4}\b/g,' ')
+    .replace(/\b\d+\s*[vaeoaº°]+\.?\b/gi,' ')
+    .replace(/\b[A-Z]\.\s*/g,' ')
+    .replace(/([a-záéíóúA-ZÁÉÍÓÚ])(\d)/g,'$1 $2')
+    .replace(/(\d)([a-záéíóúA-ZÁÉÍÓÚ])/g,'$1 $2');
 
-  const tw = [], seenTw = new Set();
-  for (const w of norm(titleText).split(/\s+/)) {
-    if (w.length > 2 && !STOP.has(w) && !/^\d+$/.test(w) && !seenSn.has(w) && !seenTw.has(w)) {
-      tw.push(w); seenTw.add(w);
-      if (tw.length >= 5) break;
+  var tw=[], seenTw={}, words=norm(titleText).split(/\s+/);
+  for (var i=0; i<words.length && tw.length<5; i++) {
+    var w=words[i];
+    if (w.length>2 && !STOP[w] && !/^\d+$/.test(w) && !seenSn[w] && !seenTw[w]) {
+      tw.push(w); seenTw[w]=1;
     }
   }
-
-  return { surnames, tw, isArticle };
+  return {surnames:surnames, tw:tw, isArticle:isArticle};
 }
 
-// ══════════════════════════════════════════════════════
-// INDEXACIÓN DEL CATÁLOGO
-// ══════════════════════════════════════════════════════
-function buildCatalogIndex(data, colTit, colAut, colEjem) {
-  return data.map(row => {
-    const titulo = String(row[colTit] || '');
-    const autor  = String(row[colAut]  || '');
-    const ejem   = parseInt(row[colEjem]) || 0;
-    const nt = norm(titulo);
-    const na = norm(autor);
-    const naSn = na.split(/\s+/)[0] || '';
-    const tw = new Set(
-      nt.split(/\s+/).filter(w => w.length > 2 && !STOP.has(w) && !/^\d+$/.test(w))
-    );
-    return { titulo, autor, ejem, nt, naSn, tw };
+function buildIndex(data, colTit, colAut, colEjem) {
+  return data.map(function(row) {
+    var titulo=String(row[colTit]||''), autor=String(row[colAut]||'');
+    var ejem=parseInt(row[colEjem])||0;
+    var nt=norm(titulo), na=norm(autor);
+    var naSn=na.split(/\s+/)[0]||'';
+    var tw={};
+    norm(titulo).split(/\s+/).forEach(function(w){ if(w.length>2&&!STOP[w]&&!/^\d+$/.test(w)) tw[w]=1; });
+    return {titulo:titulo, autor:autor, ejem:ejem, naSn:naSn, tw:tw};
   });
 }
 
-// ══════════════════════════════════════════════════════
-// SCORING
-// ══════════════════════════════════════════════════════
-function scoreMatch(refSurnames, refTw, entry) {
-  // Mejor match entre TODOS los apellidos y el primer apellido del autor catálogo
-  let authorSc = 0;
-  for (const sn of refSurnames) {
-    let sc = 0;
-    if (sn === entry.naSn) sc = 50;
-    else if (entry.naSn && (sn.includes(entry.naSn) || entry.naSn.includes(sn))) sc = 25;
-    if (sc > authorSc) authorSc = sc;
+function scoreEntry(surnames, refTw, entry) {
+  var authSc=0;
+  for (var i=0; i<surnames.length; i++) {
+    var sn=surnames[i], sc=0;
+    if (sn===entry.naSn) sc=50;
+    else if (entry.naSn && (sn.indexOf(entry.naSn)!==-1||entry.naSn.indexOf(sn)!==-1)) sc=25;
+    if (sc>authSc) authSc=sc;
   }
-
-  // Título
-  let titleSc = 0, hits = 0;
-  for (const w of refTw) {
-    if (entry.tw.has(w)) { hits++; titleSc += w.length > 6 ? 25 : 15; }
+  var titleSc=0, hits=0;
+  for (var j=0; j<refTw.length; j++) {
+    var w=refTw[j];
+    if (entry.tw[w]) { hits++; titleSc += w.length>6?25:15; }
   }
-
-  let total = authorSc + titleSc;
-  // Penalizar si NINGÚN apellido de la referencia coincidió
-  if (refSurnames.length > 0 && authorSc === 0 && entry.naSn) total -= 30;
-
-  return { total, hits, authorSc };
+  var total=authSc+titleSc;
+  if (surnames.length>0 && authSc===0 && entry.naSn) total-=30;
+  return {total:total, hits:hits, authSc:authSc};
 }
 
-// ══════════════════════════════════════════════════════
-// MATCH PRINCIPAL
-// ══════════════════════════════════════════════════════
-function matchReference(ref, catIndex) {
-  const { surnames, tw, isArticle } = parseRef(ref);
+function matchRef(ref, catIndex) {
+  var p=parseRef(ref);
+  if (p.isArticle) return {estado:'ARTÍCULO CIENTÍFICO',ejemplares:0,titulo_cat:'',autor_cat:'',score:0,obs:'Verificar online',link:'https://scholar.google.com/scholar?q='+encodeURIComponent(ref)};
 
-  if (isArticle) {
-    return {
-      estado: 'ARTÍCULO CIENTÍFICO', ejemplares: 0,
-      titulo_cat: '', autor_cat: '', score: 0,
-      obs: 'Posible artículo/revista — verificar online',
-      link: `https://scholar.google.com/scholar?q=${encodeURIComponent(ref)}`
-    };
-  }
-
-  let bestTotal = -999, bestHits = 0, bestAuth = 0, bestEntry = null;
-  for (const entry of catIndex) {
-    const { total, hits, authorSc } = scoreMatch(surnames, tw, entry);
-    if (total > bestTotal || (total === bestTotal && hits > bestHits)) {
-      bestTotal = total; bestHits = hits; bestAuth = authorSc; bestEntry = entry;
+  var bestTotal=-999, bestHits=0, bestAuth=0, bestEntry=null;
+  for (var i=0; i<catIndex.length; i++) {
+    var r=scoreEntry(p.surnames, p.tw, catIndex[i]);
+    if (r.total>bestTotal||(r.total===bestTotal&&r.hits>bestHits)) {
+      bestTotal=r.total; bestHits=r.hits; bestAuth=r.authSc; bestEntry=catIndex[i];
     }
   }
 
-  // Si el autor hace match exacto (50 pts), basta 1 hit de título
-  // Si no, con 3+ palabras clave exigir 2 hits para evitar falsos positivos
-  const minHits = bestAuth === 50 ? 1 : (tw.length >= 3 ? 2 : 1);
-  const found = bestTotal >= THRESHOLD && bestHits >= minHits;
+  var minHits = bestAuth===50 ? 1 : (p.tw.length>=3 ? 2 : 1);
+  var found = bestTotal>=THRESHOLD && bestHits>=minHits;
 
   if (found && bestEntry) {
     return {
-      estado: bestEntry.ejem > 0 ? 'EN BIBLIOTECA' : 'SIN STOCK',
+      estado: bestEntry.ejem>0?'EN BIBLIOTECA':'SIN STOCK',
       ejemplares: bestEntry.ejem,
       titulo_cat: bestEntry.titulo,
       autor_cat: bestEntry.autor,
       score: bestTotal,
-      obs: `Score ${bestTotal} · ${bestHits} hit(s) · ${tw.slice(0,3).join(', ')}`,
+      obs: 'Score '+bestTotal+' · '+bestHits+' hit(s)',
       link: ''
     };
   }
-
   return {
-    estado: 'NO ENCONTRADO', ejemplares: 0,
-    titulo_cat: '', autor_cat: '', score: bestTotal,
-    obs: `Score ${bestTotal} insuficiente · Palabras: ${tw.slice(0,3).join(', ')}`,
-    link: `https://www.bookfinder.com/search/?keywords=${encodeURIComponent(ref.slice(0,60))}&mode=basic`
+    estado:'NO ENCONTRADO', ejemplares:0, titulo_cat:'', autor_cat:'',
+    score:bestTotal,
+    obs:'Score '+bestTotal+' insuf. · '+p.tw.slice(0,3).join(', '),
+    link:'https://www.bookfinder.com/search/?keywords='+encodeURIComponent(ref.slice(0,60))
   };
 }
 
-// ══════════════════════════════════════════════════════
-// CARGA DE ARCHIVOS
-// ══════════════════════════════════════════════════════
-function setupDrop(dropId, inputId, statId, cb) {
-  const drop = document.getElementById(dropId);
-  const inp  = document.getElementById(inputId);
-  inp.addEventListener('change', e => loadFile(e.target.files[0], drop, statId, cb));
-  drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('drag'); });
-  drop.addEventListener('dragleave', () => drop.classList.remove('drag'));
-  drop.addEventListener('drop', e => {
-    e.preventDefault(); drop.classList.remove('drag');
-    if (e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0], drop, statId, cb);
-  });
+// Carga de archivos
+function setupDrop(dId,iId,sId,cb) {
+  var drop=document.getElementById(dId), inp=document.getElementById(iId);
+  inp.addEventListener('change',function(e){loadFile(e.target.files[0],drop,sId,cb);});
+  drop.addEventListener('dragover',function(e){e.preventDefault();drop.classList.add('drag');});
+  drop.addEventListener('dragleave',function(){drop.classList.remove('drag');});
+  drop.addEventListener('drop',function(e){e.preventDefault();drop.classList.remove('drag');if(e.dataTransfer.files[0])loadFile(e.dataTransfer.files[0],drop,sId,cb);});
 }
-
-function loadFile(file, drop, statId, cb) {
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    try {
-      const wb = XLSX.read(e.target.result, { type: 'binary' });
-      const ws = wb.Sheets[wb.SheetNames[0]];
-      const json = XLSX.utils.sheet_to_json(ws, { defval: '' });
+function loadFile(file,drop,sId,cb) {
+  if(!file)return;
+  var r=new FileReader();
+  r.onload=function(e){
+    try{
+      var wb=XLSX.read(e.target.result,{type:'binary'});
+      var ws=wb.Sheets[wb.SheetNames[0]];
+      var json=XLSX.utils.sheet_to_json(ws,{defval:''});
       drop.classList.add('ok');
-      document.getElementById(statId).textContent = `✓ ${file.name} · ${json.length} filas`;
+      document.getElementById(sId).textContent='✓ '+file.name+' · '+json.length+' filas';
       cb(json);
-    } catch(err) { showAlert('e', 'Error leyendo archivo: ' + err.message); }
+    }catch(err){showAlert('e','Error: '+err.message);}
   };
-  reader.readAsBinaryString(file);
+  r.readAsBinaryString(file);
 }
 
-setupDrop('dropRef', 'fileRef', 'statRef', data => {
-  dataRef = data;
-  buildColSelector('colRef', data, /ref|bib|tit|cit|libro|obra/i);
-  document.getElementById('colmapRef').style.display = 'block';
+setupDrop('dropRef','fileRef','statRef',function(d){
+  dataRef=d;
+  fillSel('colRef',d,/ref|bib|tit|cit|libro|obra/i);
+  document.getElementById('colmapRef').style.display='block';
+  checkReady();
+});
+setupDrop('dropCat','fileCat','statCat',function(d){
+  dataCat=d;
+  fillSel('colTit',d,/tit|titulo|title|nombre|libro/i);
+  fillSel('colAut',d,/aut|autor|author|escritor/i);
+  fillSel('colEjem',d,/ejem|ejemplar|cop|stock|cant|disp/i);
+  document.getElementById('colmapCat').style.display='block';
   checkReady();
 });
 
-setupDrop('dropCat', 'fileCat', 'statCat', data => {
-  dataCat = data;
-  buildColSelector('colTit',  data, /tit|title|nombre|libro/i);
-  buildColSelector('colAut',  data, /aut|author|autor|escritor/i);
-  buildColSelector('colEjem', data, /ejem|cop|stock|cant|disp/i);
-  document.getElementById('colmapCat').style.display = 'block';
-  checkReady();
-});
-
-function buildColSelector(selId, data, autoRe) {
-  const cols = Object.keys(data[0] || {});
-  const sel = document.getElementById(selId);
-  sel.innerHTML = cols.map(c => `<option value="${escH(c)}">${escH(c)}</option>`).join('');
-  const auto = cols.find(c => autoRe.test(c)) || cols[0];
-  if (auto) sel.value = auto;
-  // Update preview if it's the ref column
-  if (selId === 'colRef') { sel.addEventListener('change', updatePreview); updatePreview(); }
+function fillSel(id,data,re) {
+  var cols=Object.keys(data[0]||{});
+  var sel=document.getElementById(id);
+  sel.innerHTML=cols.map(function(c){return'<option value="'+escH(c)+'">'+escH(c)+'</option>';}).join('');
+  var auto=cols.filter(function(c){return re.test(c);})[0]||cols[0];
+  if(auto)sel.value=auto;
+  if(id==='colRef'){sel.addEventListener('change',updatePreview);updatePreview();}
 }
 
 function updatePreview() {
-  const col = document.getElementById('colRef').value;
-  if (!dataRef.length || !col) return;
-  document.getElementById('prevRef').textContent =
-    dataRef.slice(0, 2).map(r => String(r[col]).slice(0, 70)).join(' / ');
-
-  const tbody = document.getElementById('previewBody');
-  tbody.innerHTML = dataRef.slice(0, 3).map(row => {
-    const ref = String(row[col] || '');
-    const { surnames, tw } = parseRef(ref);
-    return `<tr>
-      <td class="tc">${escH(ref.slice(0, 55))}${ref.length > 55 ? '…' : ''}</td>
-      <td class="tq">${escH(surnames.slice(0,2).join(', '))}</td>
-      <td class="tq">${escH(tw.join(', '))}</td>
-    </tr>`;
+  var col=document.getElementById('colRef').value;
+  if(!dataRef.length||!col)return;
+  document.getElementById('prevRef').textContent=dataRef.slice(0,2).map(function(r){return String(r[col]).slice(0,70);}).join(' / ');
+  var tbody=document.getElementById('previewBody');
+  tbody.innerHTML=dataRef.slice(0,3).map(function(row){
+    var ref=String(row[col]||''), p=parseRef(ref);
+    return '<tr><td class="tc">'+escH(ref.slice(0,55))+(ref.length>55?'…':'')+'</td><td class="tq">'+escH(p.surnames.slice(0,3).join(', '))+'</td><td class="tq">'+escH(p.tw.join(', '))+'</td></tr>';
   }).join('');
-  document.getElementById('ptableWrap').style.display = 'block';
+  document.getElementById('ptableWrap').style.display='block';
 }
 
-function checkReady() {
-  if (dataRef.length && dataCat.length) {
-    document.getElementById('btnStart').style.display = 'inline-block';
-    document.getElementById('emptyState').style.display = 'none';
+function checkReady(){
+  if(dataRef.length&&dataCat.length){
+    document.getElementById('btnStart').style.display='inline-block';
+    document.getElementById('emptyState').style.display='none';
   }
 }
 
-// ══════════════════════════════════════════════════════
-// PROCESAMIENTO PRINCIPAL
-// ══════════════════════════════════════════════════════
-document.getElementById('btnStart').addEventListener('click', runMatch);
-document.getElementById('btnStop').addEventListener('click', () => { stopFlag = true; });
+// Procesamiento
+document.getElementById('btnStart').addEventListener('click',function(){
+  var colRef=document.getElementById('colRef').value;
+  var colTit=document.getElementById('colTit').value;
+  var colAut=document.getElementById('colAut').value;
+  var colEjem=document.getElementById('colEjem').value;
+  if(!dataRef.length||!dataCat.length){showAlert('e','Faltan archivos.');return;}
+  clearAlerts(); stopFlag=false; allResults=[];
+  document.getElementById('btnStart').disabled=true;
+  document.getElementById('btnStop').style.display='inline-block';
+  document.getElementById('progWrap').style.display='block';
+  document.getElementById('results').style.display='none';
 
-async function runMatch() {
-  const colRef  = document.getElementById('colRef').value;
-  const colTit  = document.getElementById('colTit').value;
-  const colAut  = document.getElementById('colAut').value;
-  const colEjem = document.getElementById('colEjem').value;
+  var catIndex=buildIndex(dataCat,colTit,colAut,colEjem);
+  var total=dataRef.length, i=0;
 
-  if (!dataRef.length || !dataCat.length) { showAlert('e', 'Faltan archivos.'); return; }
-
-  clearAlerts();
-  stopFlag = false;
-  allResults = [];
-  document.getElementById('btnStart').disabled = true;
-  document.getElementById('btnStop').style.display = 'inline-block';
-  document.getElementById('progWrap').style.display = 'block';
-  document.getElementById('results').style.display = 'none';
-
-  // Construir índice del catálogo
-  const catIndex = buildCatalogIndex(dataCat, colTit, colAut, colEjem);
-
-  const total = dataRef.length;
-  const CHUNK = 50; // procesar en bloques para no congelar UI
-
-  for (let i = 0; i < total; i += CHUNK) {
-    if (stopFlag) { showAlert('w', `⏹ Detenido en referencia ${i}.`); break; }
-
-    const batch = dataRef.slice(i, i + CHUNK);
-    for (let j = 0; j < batch.length; j++) {
-      const ref = String(batch[j][colRef] || '').trim();
-      const result = matchReference(ref, catIndex);
-      allResults.push({ idx: i + j + 1, ref, ...result });
+  function chunk(){
+    var end=Math.min(i+50,total);
+    while(i<end&&!stopFlag){
+      var ref=String(dataRef[i][colRef]||'').trim();
+      var res=matchRef(ref,catIndex);
+      allResults.push({idx:i+1,ref:ref,estado:res.estado,ejemplares:res.ejemplares,titulo_cat:res.titulo_cat,autor_cat:res.autor_cat,score:res.score,obs:res.obs,link:res.link});
+      i++;
     }
-
-    const pct = Math.round(Math.min(((i + CHUNK) / total) * 100, 100));
-    document.getElementById('pFill').style.width = pct + '%';
-    document.getElementById('pTxt').textContent = `Procesando... ${Math.min(i + CHUNK, total)} / ${total} (${pct}%)`;
-    await new Promise(r => setTimeout(r, 0)); // yield UI
+    var pct=Math.round((i/total)*100);
+    document.getElementById('pFill').style.width=pct+'%';
+    document.getElementById('pTxt').textContent='Procesando... '+i+' / '+total+' ('+pct+'%)';
+    if(i<total&&!stopFlag){setTimeout(chunk,0);}
+    else{
+      document.getElementById('btnStart').disabled=false;
+      document.getElementById('btnStop').style.display='none';
+      document.getElementById('progWrap').style.display='none';
+      renderAll();
+      showAlert(stopFlag?'w':'o', stopFlag?('⏹ Detenido en '+i+'.'):'✅ Completado — '+allResults.length+' referencias procesadas.');
+    }
   }
+  setTimeout(chunk,0);
+});
 
-  document.getElementById('btnStart').disabled = false;
-  document.getElementById('btnStop').style.display = 'none';
-  document.getElementById('progWrap').style.display = 'none';
-  renderAll();
-  showAlert('o', `✅ Completado — ${allResults.length} referencias procesadas.`);
-}
+document.getElementById('btnStop').addEventListener('click',function(){stopFlag=true;});
 
-// ══════════════════════════════════════════════════════
-// RENDER
-// ══════════════════════════════════════════════════════
-function renderAll() {
-  document.getElementById('results').style.display = 'block';
-  const total  = allResults.length;
-  const enBib  = allResults.filter(r => r.estado === 'EN BIBLIOTECA').length;
-  const sinStk = allResults.filter(r => r.estado === 'SIN STOCK').length;
-  const noEnc  = allResults.filter(r => r.estado === 'NO ENCONTRADO').length;
-  const arts   = allResults.filter(r => r.estado === 'ARTÍCULO CIENTÍFICO').length;
+function renderAll(){
+  document.getElementById('results').style.display='block';
+  var total=allResults.length;
+  var enBib=allResults.filter(function(r){return r.estado==='EN BIBLIOTECA';}).length;
+  var noEnc=allResults.filter(function(r){return r.estado==='NO ENCONTRADO';}).length;
+  var arts=allResults.filter(function(r){return r.estado==='ARTÍCULO CIENTÍFICO';}).length;
+  document.getElementById('metricsGrid').innerHTML=[
+    {l:'📚 Total',v:total,s:''},
+    {l:'✅ En Biblioteca',v:enBib,s:total?Math.round(enBib/total*100)+'%':''},
+    {l:'❓ No Encontrado',v:noEnc,s:''},
+    {l:'📄 Artículos',v:arts,s:''},
+  ].map(function(m){return'<div class="metric"><div class="ml">'+m.l+'</div><div class="mv">'+m.v+'</div>'+(m.s?'<div class="ms">'+m.s+'</div>':'')+'</div>';}).join('');
 
-  document.getElementById('metricsGrid').innerHTML = [
-    { l: '📚 Total',         v: total,  s: '' },
-    { l: '✅ En Biblioteca', v: enBib,  s: total ? Math.round(enBib/total*100)+'%' : '' },
-    { l: '❓ No Encontrado', v: noEnc,  s: '' },
-    { l: '📄 Artículos',     v: arts,   s: '' },
-  ].map(m => `<div class="metric"><div class="ml">${m.l}</div><div class="mv">${m.v}</div>${m.s?`<div class="ms">${m.s}</div>`:''}</div>`).join('');
-
-  const estados = [...new Set(allResults.map(r => r.estado))];
-  const fe = document.getElementById('fEst');
-  const cur = fe.value;
-  fe.innerHTML = '<option value="">Todos los estados</option>' + estados.map(e => `<option ${e===cur?'selected':''}>${escH(e)}</option>`).join('');
-
+  var estados=[],seenE={};
+  allResults.forEach(function(r){if(!seenE[r.estado]){estados.push(r.estado);seenE[r.estado]=1;}});
+  var fe=document.getElementById('fEst'),cur=fe.value;
+  fe.innerHTML='<option value="">Todos los estados</option>'+estados.map(function(e){return'<option'+(e===cur?' selected':'')+'>'+escH(e)+'</option>';}).join('');
   applyFilters();
 }
 
-function applyFilters() {
-  const est  = document.getElementById('fEst').value;
-  const srch = document.getElementById('fSearch').value.toLowerCase();
-  filtered = allResults.filter(r =>
-    (!est || r.estado === est) &&
-    (!srch || r.ref.toLowerCase().includes(srch) || r.titulo_cat.toLowerCase().includes(srch))
-  );
-  page = 0;
-  renderTable();
-}
-document.getElementById('fEst').addEventListener('change', applyFilters);
-document.getElementById('fSearch').addEventListener('input', applyFilters);
-
-function srt(key) {
-  if (sortKey === key) sortDir *= -1; else { sortKey = key; sortDir = 1; }
-  filtered.sort((a, b) => {
-    const av = a[key], bv = b[key];
-    if (typeof av === 'number') return (av - bv) * sortDir;
-    return String(av).localeCompare(String(bv)) * sortDir;
+function applyFilters(){
+  var est=document.getElementById('fEst').value;
+  var srch=document.getElementById('fSearch').value.toLowerCase();
+  filtered=allResults.filter(function(r){
+    return(!est||r.estado===est)&&(!srch||r.ref.toLowerCase().indexOf(srch)!==-1||r.titulo_cat.toLowerCase().indexOf(srch)!==-1);
   });
-  page = 0; renderTable();
+  pg=0; renderTable();
+}
+document.getElementById('fEst').addEventListener('change',applyFilters);
+document.getElementById('fSearch').addEventListener('input',applyFilters);
+
+function srt(key){
+  if(sortKey===key)sortDir*=-1;else{sortKey=key;sortDir=1;}
+  filtered.sort(function(a,b){var av=a[key],bv=b[key];if(typeof av==='number')return(av-bv)*sortDir;return String(av).localeCompare(String(bv))*sortDir;});
+  pg=0;renderTable();
 }
 
-function renderTable() {
-  const start = page * PAGE;
-  const slice = filtered.slice(start, start + PAGE);
-  const total = filtered.length;
-
-  document.getElementById('cntLbl').textContent = `Mostrando ${start+1}–${Math.min(start+PAGE,total)} de ${total}`;
-  document.getElementById('pageLbl').textContent = `Pág. ${page+1}/${Math.max(1, Math.ceil(total/PAGE))}`;
-  document.getElementById('btnPrev').disabled = page === 0;
-  document.getElementById('btnNext').disabled = start + PAGE >= total;
-
-  const bmap = {
-    'EN BIBLIOTECA': 'b-g', 'SIN STOCK': 'b-r',
-    'NO ENCONTRADO': 'b-a', 'ARTÍCULO CIENTÍFICO': 'b-b'
-  };
-
-  document.getElementById('tbody').innerHTML = slice.map(r => {
-    const bc = bmap[r.estado] || 'b-a';
-    const link = r.link
-      ? `<a href="${escH(r.link)}" target="_blank" style="color:var(--gold-dim);font-size:0.69rem;text-decoration:none;border-bottom:1px dotted var(--gold-dim)">↗ Buscar</a>`
-      : '';
-    return `<tr>
-      <td class="sm" style="color:var(--text-dim)">${r.idx}</td>
-      <td class="reftd">${escH(r.ref)}</td>
-      <td><span class="badge ${bc}">${escH(r.estado)}</span></td>
-      <td class="sm">${r.ejemplares || '–'}</td>
-      <td class="cattd">${escH(r.titulo_cat)}</td>
-      <td class="cattd" style="color:var(--text-dim)">${escH(r.autor_cat)}</td>
-      <td class="sm" style="color:var(--gold-dim)">${r.score}</td>
-      <td class="obs">${escH(r.obs)} ${link}</td>
-    </tr>`;
+function renderTable(){
+  var start=pg*PAGE, slice=filtered.slice(start,start+PAGE), total=filtered.length;
+  document.getElementById('cntLbl').textContent='Mostrando '+(start+1)+'–'+Math.min(start+PAGE,total)+' de '+total;
+  document.getElementById('pageLbl').textContent='Pág. '+(pg+1)+'/'+Math.max(1,Math.ceil(total/PAGE));
+  document.getElementById('btnPrev').disabled=pg===0;
+  document.getElementById('btnNext').disabled=start+PAGE>=total;
+  var bmap={'EN BIBLIOTECA':'b-g','SIN STOCK':'b-r','NO ENCONTRADO':'b-a','ARTÍCULO CIENTÍFICO':'b-b'};
+  document.getElementById('tbody').innerHTML=slice.map(function(r){
+    var bc=bmap[r.estado]||'b-a';
+    var lnk=r.link?'<a href="'+escH(r.link)+'" target="_blank" style="color:var(--gold-dim);font-size:0.69rem;text-decoration:none;border-bottom:1px dotted var(--gold-dim)">↗</a>':'';
+    return'<tr><td class="sm" style="color:var(--text-dim)">'+r.idx+'</td><td class="reftd">'+escH(r.ref)+'</td><td><span class="badge '+bc+'">'+escH(r.estado)+'</span></td><td class="sm">'+(r.ejemplares||'–')+'</td><td class="cattd">'+escH(r.titulo_cat)+'</td><td class="cattd" style="color:var(--text-dim)">'+escH(r.autor_cat)+'</td><td class="sm" style="color:var(--gold-dim)">'+r.score+'</td><td class="obs">'+escH(r.obs)+' '+lnk+'</td></tr>';
   }).join('');
 }
 
-function prevPage() { if (page > 0) { page--; renderTable(); } }
-function nextPage() { if ((page+1)*PAGE < filtered.length) { page++; renderTable(); } }
+function prevPage(){if(pg>0){pg--;renderTable();}}
+function nextPage(){if((pg+1)*PAGE<filtered.length){pg++;renderTable();}}
 
-// ══════════════════════════════════════════════════════
-// DESCARGAS
-// ══════════════════════════════════════════════════════
-function makeExcel(data, sheetName, fname) {
-  const ws = XLSX.utils.json_to_sheet(data);
-  ws['!cols'] = [{wch:4},{wch:55},{wch:22},{wch:9},{wch:40},{wch:30},{wch:7},{wch:45}];
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, sheetName);
-  XLSX.writeFile(wb, fname);
+document.getElementById('btnDlAll').addEventListener('click',function(){
+  makeXls(allResults.map(function(r){return{'#':r.idx,'Referencia Original':r.ref,'Estado':r.estado,'Ejemplares':r.ejemplares,'Título en Catálogo':r.titulo_cat,'Autor Catálogo':r.autor_cat,'Score':r.score,'Observaciones':r.obs};}), 'Resultados','Resultados_Biblioteca_'+ts()+'.xlsx');
+});
+document.getElementById('btnDlNoEnc').addEventListener('click',function(){
+  var d=allResults.filter(function(r){return r.estado==='NO ENCONTRADO'||r.estado==='SIN STOCK';});
+  if(!d.length){showAlert('w','No hay referencias sin encontrar.');return;}
+  makeXls(d.map(function(r){return{'#':r.idx,'Referencia':r.ref,'Estado':r.estado,'Observaciones':r.obs};}), 'No Encontrados','No_Encontrados_'+ts()+'.xlsx');
+});
+
+function makeXls(data,sheet,fname){
+  var ws=XLSX.utils.json_to_sheet(data);
+  ws['!cols']=[{wch:4},{wch:55},{wch:22},{wch:9},{wch:40},{wch:30},{wch:7},{wch:40}];
+  var wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,sheet);
+  XLSX.writeFile(wb,fname);
 }
-
-document.getElementById('btnDlAll').addEventListener('click', () => {
-  makeExcel(
-    allResults.map(r => ({
-      '#': r.idx, 'Referencia Original': r.ref, 'Estado': r.estado,
-      'Ejemplares': r.ejemplares, 'Título en Catálogo': r.titulo_cat,
-      'Autor Catálogo': r.autor_cat, 'Score': r.score, 'Observaciones': r.obs
-    })),
-    'Resultados',
-    `Resultados_Biblioteca_${ts()}.xlsx`
-  );
-});
-
-document.getElementById('btnDlNoEnc').addEventListener('click', () => {
-  const noEnc = allResults.filter(r => r.estado === 'NO ENCONTRADO' || r.estado === 'SIN STOCK');
-  if (!noEnc.length) { showAlert('w', 'No hay referencias sin encontrar.'); return; }
-  makeExcel(
-    noEnc.map(r => ({
-      '#': r.idx, 'Referencia Original': r.ref, 'Estado': r.estado, 'Observaciones': r.obs
-    })),
-    'No Encontrados',
-    `No_Encontrados_${ts()}.xlsx`
-  );
-});
-
-function ts() { return new Date().toISOString().slice(0,10).replace(/-/g,''); }
-
-// ══════════════════════════════════════════════════════
-// UTILIDADES
-// ══════════════════════════════════════════════════════
-function showAlert(type, msg) {
-  const map = { e:'a-e', w:'a-w', o:'a-o' };
-  const d = document.createElement('div');
-  d.className = `alert ${map[type]||'a-w'}`;
-  d.innerHTML = `<span>${msg}</span>`;
+function ts(){return new Date().toISOString().slice(0,10).replace(/-/g,'');}
+function showAlert(t,msg){
+  var map={e:'a-e',w:'a-w',o:'a-o'};
+  var d=document.createElement('div');
+  d.className='alert '+(map[t]||'a-w');
+  d.innerHTML='<span>'+msg+'</span>';
   document.getElementById('alerts').appendChild(d);
-  if (type !== 'e') setTimeout(() => d.remove(), 6000);
+  if(t!=='e')setTimeout(function(){if(d.parentNode)d.parentNode.removeChild(d);},6000);
 }
-function clearAlerts() { document.getElementById('alerts').innerHTML = ''; }
-function escH(s) {
-  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
+function clearAlerts(){document.getElementById('alerts').innerHTML='';}
+function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 </script>
 </body>
 </html>
