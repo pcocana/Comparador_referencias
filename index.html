@@ -3,1132 +3,591 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gestor Bibliotecario Inteligente</title>
+<title>Gestor Bibliotecario PUCV – OPAC en vivo</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+3:wght@300;400;500;600&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Sans+3:wght@300;400;500;600&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg:        #0f0d0a;
-    --surface:   #1a1712;
-    --card:      #221f1a;
-    --border:    #3a3228;
-    --border-h:  #6b5c44;
-    --gold:      #c9a84c;
-    --gold-dim:  #8a6f34;
-    --cream:     #e8dcc8;
-    --cream-dim: #a89880;
-    --red:       #c0392b;
-    --green:     #27ae60;
-    --amber:     #e67e22;
-    --blue:      #2980b9;
-    --text:      #e8dcc8;
-    --text-dim:  #a89880;
-    --radius:    6px;
-  }
+:root {
+  --bg:#0f0d0a; --surface:#1a1712; --card:#221f1a; --border:#3a3228; --border-h:#6b5c44;
+  --gold:#c9a84c; --gold-dim:#8a6f34; --cream:#e8dcc8; --cream-dim:#a89880;
+  --green:#27ae60; --amber:#e67e22; --blue:#2980b9; --red:#c0392b;
+  --text:#e8dcc8; --text-dim:#a89880; --r:6px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+header{background:#181410;border-bottom:1px solid var(--border);padding:22px 36px;display:flex;align-items:center;gap:16px;}
+header h1{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--gold);}
+header p{font-size:0.82rem;color:var(--text-dim);margin-top:3px;}
+.version{font-family:'Source Code Pro',monospace;font-size:0.7rem;color:var(--gold-dim);background:rgba(201,168,76,.1);border:1px solid var(--gold-dim);padding:3px 10px;border-radius:20px;margin-left:auto;}
 
-  body {
-    font-family: 'Source Sans 3', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+.layout{display:flex;min-height:calc(100vh - 74px);}
 
-  /* ── HEADER ── */
-  header {
-    background: linear-gradient(180deg, #181410 0%, #0f0d0a 100%);
-    border-bottom: 1px solid var(--border);
-    padding: 28px 40px 20px;
-    display: flex;
-    align-items: flex-end;
-    gap: 18px;
-  }
-  header .logo { font-size: 2.6rem; line-height: 1; }
-  header .titles { flex: 1; }
-  header h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: var(--gold);
-    letter-spacing: 0.02em;
-    line-height: 1.1;
-  }
-  header p {
-    font-size: 0.85rem;
-    color: var(--text-dim);
-    margin-top: 4px;
-  }
-  header .version {
-    font-family: 'Source Code Pro', monospace;
-    font-size: 0.72rem;
-    color: var(--gold-dim);
-    background: rgba(201,168,76,0.08);
-    border: 1px solid var(--gold-dim);
-    padding: 3px 10px;
-    border-radius: 20px;
-    align-self: flex-start;
-  }
+aside{width:270px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);padding:24px 20px;display:flex;flex-direction:column;gap:24px;}
+.cfg-title{font-family:'Source Code Pro',monospace;font-size:0.68rem;letter-spacing:.12em;color:var(--gold);text-transform:uppercase;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+label{display:block;font-size:0.8rem;color:var(--text-dim);margin-bottom:5px;}
+input[type=text],input[type=password]{width:100%;background:var(--card);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:var(--r);font-size:0.82rem;font-family:'Source Code Pro',monospace;}
+input[type=text]:focus,input[type=password]:focus{outline:none;border-color:var(--gold-dim);}
+input[type=text]::placeholder,input[type=password]::placeholder{color:var(--text-dim);font-size:0.75rem;}
+.help-text{font-size:0.73rem;color:var(--text-dim);margin-top:5px;line-height:1.5;}
+.help-text a{color:var(--gold-dim);}
 
-  /* ── LAYOUT ── */
-  .layout {
-    display: flex;
-    min-height: calc(100vh - 88px);
-  }
+.how-list{list-style:none;font-size:0.79rem;color:var(--text-dim);line-height:1.8;}
+.how-list li::before{content:'→ ';color:var(--gold-dim);}
 
-  /* ── SIDEBAR ── */
-  aside {
-    width: 280px;
-    flex-shrink: 0;
-    background: var(--surface);
-    border-right: 1px solid var(--border);
-    padding: 28px 22px;
-    display: flex;
-    flex-direction: column;
-    gap: 28px;
-  }
-  .cfg-section h3 {
-    font-family: 'Source Code Pro', monospace;
-    font-size: 0.72rem;
-    letter-spacing: 0.12em;
-    color: var(--gold);
-    text-transform: uppercase;
-    margin-bottom: 16px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid var(--border);
-  }
-  label {
-    display: block;
-    font-size: 0.82rem;
-    color: var(--text-dim);
-    margin-bottom: 6px;
-  }
-  .slider-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  input[type=range] {
-    flex: 1;
-    accent-color: var(--gold);
-    cursor: pointer;
-  }
-  .slider-val {
-    font-family: 'Source Code Pro', monospace;
-    font-size: 0.9rem;
-    color: var(--gold);
-    min-width: 36px;
-    text-align: right;
-  }
-  .toggle-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 4px;
-  }
-  .toggle {
-    position: relative;
-    width: 36px;
-    height: 20px;
-    flex-shrink: 0;
-  }
-  .toggle input { opacity: 0; width: 0; height: 0; }
-  .toggle-thumb {
-    position: absolute;
-    inset: 0;
-    background: var(--border);
-    border-radius: 20px;
-    cursor: pointer;
-    transition: background .2s;
-  }
-  .toggle-thumb::after {
-    content: '';
-    position: absolute;
-    left: 3px; top: 3px;
-    width: 14px; height: 14px;
-    background: #fff;
-    border-radius: 50%;
-    transition: transform .2s;
-  }
-  .toggle input:checked + .toggle-thumb { background: var(--gold); }
-  .toggle input:checked + .toggle-thumb::after { transform: translateX(16px); }
-  .toggle-label { font-size: 0.82rem; color: var(--text-dim); }
+main{flex:1;padding:28px 32px;overflow-y:auto;}
 
-  .how-to {
-    font-size: 0.8rem;
-    color: var(--text-dim);
-    line-height: 1.6;
-  }
-  .how-to li { list-style: none; padding: 3px 0; }
-  .how-to li::before { content: '→ '; color: var(--gold-dim); }
+.drop-zone{border:1.5px dashed var(--border);border-radius:var(--r);padding:24px 20px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;position:relative;background:var(--card);margin-bottom:20px;}
+.drop-zone:hover,.drop-zone.drag{border-color:var(--gold);background:rgba(201,168,76,.04);}
+.drop-zone.loaded{border-color:var(--green);border-style:solid;}
+.drop-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;}
+.dz-icon{font-size:2rem;margin-bottom:8px;}
+.dz-label{font-family:'Playfair Display',serif;font-size:1rem;color:var(--cream);margin-bottom:4px;font-weight:700;}
+.dz-hint{font-size:0.76rem;color:var(--text-dim);}
+.dz-status{margin-top:8px;font-size:0.78rem;font-family:'Source Code Pro',monospace;color:var(--green);min-height:1.2em;}
 
-  /* ── MAIN ── */
-  main {
-    flex: 1;
-    padding: 32px 36px;
-    overflow-y: auto;
-  }
+.col-map{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:20px;display:none;}
+.col-map label{font-size:0.78rem;color:var(--text-dim);margin-bottom:4px;}
+select{background:var(--card);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:var(--r);font-size:0.8rem;width:100%;margin-bottom:10px;font-family:'Source Sans 3',sans-serif;cursor:pointer;}
+select:focus{outline:none;border-color:var(--gold-dim);}
 
-  /* ── DROP ZONES ── */
-  .upload-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    margin-bottom: 28px;
-  }
-  .drop-zone {
-    border: 1.5px dashed var(--border);
-    border-radius: var(--radius);
-    padding: 28px 20px;
-    text-align: center;
-    cursor: pointer;
-    transition: border-color .2s, background .2s;
-    position: relative;
-    background: var(--card);
-  }
-  .drop-zone:hover, .drop-zone.drag { border-color: var(--gold); background: rgba(201,168,76,0.04); }
-  .drop-zone.loaded { border-color: var(--green); border-style: solid; }
-  .drop-zone input[type=file] {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    cursor: pointer;
-    width: 100%;
-  }
-  .drop-icon { font-size: 2.2rem; margin-bottom: 10px; display: block; }
-  .drop-label {
-    font-family: 'Playfair Display', serif;
-    font-size: 1rem;
-    color: var(--cream);
-    margin-bottom: 6px;
-    font-weight: 600;
-  }
-  .drop-hint { font-size: 0.78rem; color: var(--text-dim); }
-  .drop-status {
-    margin-top: 10px;
-    font-size: 0.8rem;
-    font-family: 'Source Code Pro', monospace;
-    color: var(--green);
-    min-height: 1.2em;
-  }
+.btn-primary{width:100%;padding:14px;background:var(--gold);color:#0f0d0a;font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;border:none;border-radius:var(--r);cursor:pointer;letter-spacing:.06em;transition:background .2s;display:none;}
+.btn-primary:hover{background:#d4b060;}
+.btn-primary:disabled{background:var(--border);color:var(--text-dim);cursor:not-allowed;}
 
-  /* ── PROCESS BUTTON ── */
-  .btn-primary {
-    width: 100%;
-    padding: 16px 32px;
-    background: var(--gold);
-    color: #0f0d0a;
-    font-family: 'Playfair Display', serif;
-    font-size: 1.05rem;
-    font-weight: 700;
-    border: none;
-    border-radius: var(--radius);
-    cursor: pointer;
-    letter-spacing: 0.06em;
-    transition: background .2s, transform .1s;
-    display: none;
-  }
-  .btn-primary:hover { background: #d4b060; }
-  .btn-primary:active { transform: scale(0.99); }
-  .btn-primary:disabled { background: var(--border); color: var(--text-dim); cursor: not-allowed; }
+.progress-wrap{margin:18px 0;display:none;}
+.prog-bg{background:var(--border);border-radius:4px;height:5px;overflow:hidden;margin-bottom:6px;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold));border-radius:4px;transition:width .3s;width:0%;}
+.prog-text{font-size:0.76rem;color:var(--text-dim);font-family:'Source Code Pro',monospace;}
 
-  /* ── PROGRESS ── */
-  .progress-wrap { margin: 20px 0; display: none; }
-  .progress-bar-bg {
-    background: var(--border);
-    border-radius: 4px;
-    height: 6px;
-    overflow: hidden;
-    margin-bottom: 8px;
-  }
-  .progress-bar-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--gold-dim), var(--gold));
-    border-radius: 4px;
-    transition: width .1s;
-    width: 0%;
-  }
-  .progress-text { font-size: 0.8rem; color: var(--text-dim); font-family: 'Source Code Pro', monospace; }
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
+.metric{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;}
+.m-label{font-size:0.7rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px;}
+.m-val{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;color:var(--gold);}
+.m-sub{font-size:0.72rem;color:var(--green);margin-top:2px;}
 
-  /* ── DETECTED COLUMNS INFO ── */
-  .col-info {
-    background: rgba(41,128,185,0.1);
-    border: 1px solid rgba(41,128,185,0.3);
-    border-radius: var(--radius);
-    padding: 10px 16px;
-    font-size: 0.8rem;
-    color: #81bef7;
-    font-family: 'Source Code Pro', monospace;
-    margin-bottom: 20px;
-    display: none;
-  }
+.section-title{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--cream);margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border);}
 
-  /* ── METRICS ── */
-  .metrics-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 14px;
-    margin-bottom: 28px;
-  }
-  .metric-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 16px 18px;
-  }
-  .metric-card .m-label { font-size: 0.72rem; color: var(--text-dim); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.08em; }
-  .metric-card .m-val {
-    font-family: 'Playfair Display', serif;
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--gold);
-    line-height: 1;
-  }
-  .metric-card .m-delta { font-size: 0.75rem; color: var(--green); margin-top: 4px; }
+.filters{display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap;align-items:flex-end;}
+.fgroup{display:flex;flex-direction:column;gap:3px;}
+.fgroup label{font-size:0.72rem;color:var(--text-dim);}
+.fgroup select,.fgroup input{background:var(--card);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:var(--r);font-size:0.8rem;font-family:'Source Sans 3',sans-serif;}
+.fgroup input::placeholder{color:var(--text-dim);}
+.fgroup input:focus,.fgroup select:focus{outline:none;border-color:var(--gold-dim);}
+.count-lbl{font-size:0.75rem;color:var(--text-dim);font-family:'Source Code Pro',monospace;padding-bottom:7px;}
 
-  /* ── RESULTS TABLE ── */
-  .results-section { display: none; }
-  .section-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.15rem;
-    color: var(--cream);
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .section-title::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-  }
+.table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:var(--r);}
+table{width:100%;border-collapse:collapse;font-size:0.8rem;}
+thead tr{background:#2a251e;border-bottom:2px solid var(--border);}
+th{padding:10px 12px;text-align:left;font-family:'Source Code Pro',monospace;font-size:0.68rem;letter-spacing:.08em;color:var(--gold);white-space:nowrap;cursor:pointer;user-select:none;}
+th:hover{color:var(--cream);}
+td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:top;}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover{background:rgba(201,168,76,.03);}
 
-  .filters {
-    display: flex;
-    gap: 14px;
-    margin-bottom: 16px;
-    flex-wrap: wrap;
-    align-items: center;
-  }
-  .filter-group {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-  .filter-group label { font-size: 0.75rem; color: var(--text-dim); }
-  select {
-    background: var(--card);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 7px 12px;
-    border-radius: var(--radius);
-    font-size: 0.82rem;
-    cursor: pointer;
-    font-family: 'Source Sans 3', sans-serif;
-  }
-  select:focus { outline: none; border-color: var(--gold-dim); }
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:0.68rem;font-weight:600;font-family:'Source Code Pro',monospace;white-space:nowrap;}
+.b-green{background:rgba(39,174,96,.15);color:#2ecc71;border:1px solid rgba(39,174,96,.3);}
+.b-red{background:rgba(192,57,43,.15);color:#e74c3c;border:1px solid rgba(192,57,43,.3);}
+.b-amber{background:rgba(230,126,34,.15);color:#f39c12;border:1px solid rgba(230,126,34,.3);}
+.b-blue{background:rgba(41,128,185,.15);color:#5dade2;border:1px solid rgba(41,128,185,.3);}
+.b-gray{background:rgba(255,255,255,.06);color:var(--text-dim);border:1px solid var(--border);}
+.b-spin{background:rgba(201,168,76,.1);color:var(--gold);border:1px solid var(--gold-dim);}
 
-  .search-box {
-    flex: 1;
-    min-width: 200px;
-  }
-  .search-box input {
-    width: 100%;
-    background: var(--card);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 7px 12px;
-    border-radius: var(--radius);
-    font-size: 0.82rem;
-    font-family: 'Source Sans 3', sans-serif;
-  }
-  .search-box input:focus { outline: none; border-color: var(--gold-dim); }
-  .search-box input::placeholder { color: var(--text-dim); }
+.ref-cell{max-width:260px;word-break:break-word;color:var(--cream);}
+.small-mono{font-family:'Source Code Pro',monospace;font-size:0.75rem;}
+.cat-link{color:var(--gold-dim);font-size:0.75rem;text-decoration:none;border-bottom:1px dotted var(--gold-dim);}
+.cat-link:hover{color:var(--gold);}
 
-  .table-wrap {
-    overflow-x: auto;
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-  }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.82rem;
-  }
-  thead tr {
-    background: #2a251e;
-    border-bottom: 2px solid var(--border);
-  }
-  th {
-    padding: 11px 14px;
-    text-align: left;
-    font-family: 'Source Code Pro', monospace;
-    font-size: 0.72rem;
-    letter-spacing: 0.08em;
-    color: var(--gold);
-    white-space: nowrap;
-    cursor: pointer;
-    user-select: none;
-  }
-  th:hover { color: var(--cream); }
-  td {
-    padding: 10px 14px;
-    border-bottom: 1px solid var(--border);
-    vertical-align: top;
-  }
-  tr:last-child td { border-bottom: none; }
-  tbody tr:hover { background: rgba(201,168,76,0.04); }
+.dl-row{margin-top:16px;display:flex;justify-content:flex-end;}
+.btn-sec{background:transparent;border:1.5px solid var(--gold-dim);color:var(--gold);padding:9px 22px;border-radius:var(--r);font-family:'Source Sans 3',sans-serif;font-size:0.85rem;font-weight:600;cursor:pointer;transition:background .2s;}
+.btn-sec:hover{background:rgba(201,168,76,.1);}
 
-  .td-ref { max-width: 280px; word-break: break-word; color: var(--cream); }
-  .td-small { font-family: 'Source Code Pro', monospace; font-size: 0.78rem; }
+.results-section{display:none;}
+.empty{text-align:center;padding:50px 20px;color:var(--text-dim);}
+.empty-icon{font-size:3rem;opacity:.35;margin-bottom:12px;}
 
-  /* Estado badges */
-  .badge {
-    display: inline-block;
-    padding: 2px 10px;
-    border-radius: 20px;
-    font-size: 0.72rem;
-    font-weight: 600;
-    font-family: 'Source Code Pro', monospace;
-    letter-spacing: 0.05em;
-    white-space: nowrap;
-  }
-  .badge-green  { background: rgba(39,174,96,.15); color: #2ecc71; border: 1px solid rgba(39,174,96,.3); }
-  .badge-red    { background: rgba(192,57,43,.15); color: #e74c3c; border: 1px solid rgba(192,57,43,.3); }
-  .badge-amber  { background: rgba(230,126,34,.15); color: #f39c12; border: 1px solid rgba(230,126,34,.3); }
-  .badge-blue   { background: rgba(41,128,185,.15); color: #5dade2; border: 1px solid rgba(41,128,185,.3); }
-  .badge-gray   { background: rgba(255,255,255,.06); color: var(--text-dim); border: 1px solid var(--border); }
+.alert{padding:10px 14px;border-radius:var(--r);font-size:0.81rem;margin-bottom:12px;display:flex;gap:8px;}
+.a-warn{background:rgba(230,126,34,.1);border:1px solid rgba(230,126,34,.3);color:#f0a050;}
+.a-err{background:rgba(192,57,43,.1);border:1px solid rgba(192,57,43,.3);color:#e74c3c;}
+.a-ok{background:rgba(39,174,96,.1);border:1px solid rgba(39,174,96,.3);color:#2ecc71;}
+.a-info{background:rgba(41,128,185,.1);border:1px solid rgba(41,128,185,.3);color:#5dade2;}
 
-  .sim-bar {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .sim-bar-bg {
-    width: 60px;
-    height: 5px;
-    background: var(--border);
-    border-radius: 3px;
-    overflow: hidden;
-  }
-  .sim-bar-fill { height: 100%; border-radius: 3px; }
+.stop-btn{background:rgba(192,57,43,.15);border:1px solid rgba(192,57,43,.4);color:#e74c3c;padding:8px 18px;border-radius:var(--r);font-size:0.82rem;cursor:pointer;margin-left:12px;display:none;}
+.stop-btn:hover{background:rgba(192,57,43,.25);}
 
-  a.cotizar-link {
-    color: var(--gold-dim);
-    font-size: 0.78rem;
-    text-decoration: none;
-    font-family: 'Source Code Pro', monospace;
-    border-bottom: 1px dotted var(--gold-dim);
-  }
-  a.cotizar-link:hover { color: var(--gold); }
+footer{text-align:center;padding:16px;font-size:0.72rem;color:var(--text-dim);border-top:1px solid var(--border);margin-top:30px;font-family:'Source Code Pro',monospace;}
 
-  /* ── DOWNLOAD ── */
-  .dl-row {
-    margin-top: 20px;
-    display: flex;
-    justify-content: flex-end;
-  }
-  .btn-dl {
-    background: transparent;
-    border: 1.5px solid var(--gold-dim);
-    color: var(--gold);
-    padding: 10px 24px;
-    border-radius: var(--radius);
-    font-family: 'Source Sans 3', sans-serif;
-    font-size: 0.88rem;
-    font-weight: 600;
-    cursor: pointer;
-    letter-spacing: 0.04em;
-    transition: background .2s, border-color .2s;
-  }
-  .btn-dl:hover { background: rgba(201,168,76,.1); border-color: var(--gold); }
+@media(max-width:860px){aside{display:none;}.metrics{grid-template-columns:repeat(2,1fr);}}
 
-  /* ── DEBUG ── */
-  .debug-section {
-    margin-top: 20px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 16px;
-    display: none;
-  }
-  .debug-section pre {
-    font-family: 'Source Code Pro', monospace;
-    font-size: 0.75rem;
-    color: #7ec8a4;
-    overflow-x: auto;
-    white-space: pre-wrap;
-  }
+.reasoning-cell{font-size:0.73rem;color:var(--text-dim);max-width:220px;word-break:break-word;font-style:italic;}
+.opac-url{font-size:0.72rem;}
 
-  /* ── ALERT ── */
-  .alert {
-    padding: 11px 16px;
-    border-radius: var(--radius);
-    font-size: 0.83rem;
-    margin-bottom: 14px;
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-  }
-  .alert-warning { background: rgba(230,126,34,.1); border: 1px solid rgba(230,126,34,.3); color: #f0a050; }
-  .alert-error   { background: rgba(192,57,43,.1); border: 1px solid rgba(192,57,43,.3); color: #e74c3c; }
-  .alert-success { background: rgba(39,174,96,.1); border: 1px solid rgba(39,174,96,.3); color: #2ecc71; }
-
-  /* ── FOOTER ── */
-  footer {
-    text-align: center;
-    padding: 18px;
-    font-size: 0.76rem;
-    color: var(--text-dim);
-    border-top: 1px solid var(--border);
-    margin-top: 40px;
-    font-family: 'Source Code Pro', monospace;
-    letter-spacing: 0.04em;
-  }
-
-  /* ── EMPTY STATE ── */
-  .empty-state {
-    text-align: center;
-    padding: 60px 20px;
-    color: var(--text-dim);
-  }
-  .empty-state .es-icon { font-size: 3.5rem; margin-bottom: 14px; opacity: .4; }
-  .empty-state p { font-size: 0.88rem; }
-
-  @media (max-width: 900px) {
-    .upload-grid { grid-template-columns: 1fr; }
-    .metrics-grid { grid-template-columns: repeat(2, 1fr); }
-    aside { display: none; }
-  }
+.rate-warn{background:rgba(230,126,34,.08);border:1px solid rgba(230,126,34,.2);border-radius:var(--r);padding:10px 14px;font-size:0.78rem;color:#c89040;display:none;margin-bottom:12px;}
 </style>
 </head>
 <body>
-
 <header>
-  <div class="logo">📚</div>
-  <div class="titles">
-    <h1>Gestor Bibliotecario Inteligente</h1>
-    <p>Cruza referencias con catálogo · Detección de stock · Fuzzy matching</p>
+  <div>
+    <h1>📚 Gestor Bibliotecario PUCV</h1>
+    <p>Búsqueda en vivo en el OPAC · Catálogo real y actualizado</p>
   </div>
-  <span class="version">v2.0 HTML</span>
+  <span class="version">OPAC Live v3.0</span>
 </header>
 
 <div class="layout">
-  <!-- SIDEBAR -->
-  <aside>
-    <div class="cfg-section">
-      <h3>⚙ Configuración</h3>
-      <label for="umbral">Umbral de similitud</label>
-      <div class="slider-row">
-        <input type="range" id="umbral" min="50" max="95" step="5" value="70">
-        <span class="slider-val" id="umbralVal">70%</span>
-      </div>
+<aside>
+  <div>
+    <div class="cfg-title">🔑 API Key Anthropic</div>
+    <label for="apiKey">Tu API Key</label>
+    <input type="password" id="apiKey" placeholder="sk-ant-api03-...">
+    <div class="help-text">
+      Necesaria para el análisis inteligente de referencias.<br>
+      Obtén tu key en <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a><br>
+      No se almacena — solo vive en esta pestaña.
     </div>
+  </div>
 
-    <div class="cfg-section">
-      <h3>⚡ Opciones</h3>
-      <div class="toggle-row">
-        <label class="toggle">
-          <input type="checkbox" id="debugMode">
-          <span class="toggle-thumb"></span>
-        </label>
-        <span class="toggle-label">Mostrar debug</span>
-      </div>
-    </div>
+  <div>
+    <div class="cfg-title">🔗 OPAC</div>
+    <label for="opacUrl">URL del catálogo</label>
+    <input type="text" id="opacUrl" value="https://catalogo.pucv.cl">
+    <div class="help-text">URL base de tu instancia Koha.</div>
+  </div>
 
-    <div class="cfg-section">
-      <h3>📖 Cómo usar</h3>
-      <ul class="how-to">
-        <li>Sube tus <strong>Referencias</strong></li>
-        <li>Sube el <strong>Catálogo</strong></li>
-        <li>Ajusta el umbral si es necesario</li>
-        <li>Presiona <strong>Procesar</strong></li>
-        <li>Descarga el resultado</li>
-      </ul>
-    </div>
+  <div>
+    <div class="cfg-title">⚙ Opciones</div>
+    <label for="delayMs">Pausa entre consultas (ms)</label>
+    <input type="text" id="delayMs" value="1500" style="width:80px;">
+    <div class="help-text">Evita saturar el OPAC. Mínimo recomendado: 1000 ms.</div>
+  </div>
 
-    <div class="cfg-section">
-      <h3>📌 Formatos</h3>
-      <ul class="how-to">
-        <li>Excel (.xlsx, .xls)</li>
-        <li>CSV (.csv)</li>
-      </ul>
-    </div>
+  <div>
+    <div class="cfg-title">📖 Cómo usar</div>
+    <ul class="how-list">
+      <li>Ingresa tu API Key</li>
+      <li>Sube tu archivo de referencias</li>
+      <li>Selecciona la columna correcta</li>
+      <li>Presiona Procesar</li>
+      <li>Descarga el resultado en Excel</li>
+    </ul>
+  </div>
 
-    <div class="cfg-section">
-      <h3>🔍 El sistema detecta</h3>
-      <ul class="how-to">
-        <li>Libros en stock</li>
-        <li>Libros sin stock</li>
-        <li>Artículos científicos</li>
-        <li>Referencias a cotizar</li>
-      </ul>
-    </div>
-  </aside>
+  <div>
+    <div class="cfg-title">🔍 Qué detecta</div>
+    <ul class="how-list">
+      <li>Libros en stock real</li>
+      <li>Libros sin stock</li>
+      <li>Artículos (redirige a Scholar)</li>
+      <li>No encontrado en catálogo</li>
+    </ul>
+  </div>
+</aside>
 
-  <!-- MAIN -->
-  <main>
-    <div id="alerts"></div>
+<main>
+  <div id="alerts"></div>
 
-    <!-- FILE UPLOADS -->
-    <div class="upload-grid">
-      <div class="drop-zone" id="dropRef">
-        <input type="file" id="fileRef" accept=".csv,.xlsx,.xls">
-        <span class="drop-icon">📄</span>
-        <div class="drop-label">1️⃣ Archivo de Referencias</div>
-        <div class="drop-hint">Excel o CSV con la bibliografía a verificar</div>
-        <div class="drop-status" id="statusRef"></div>
-      </div>
-      <div class="drop-zone" id="dropCat">
-        <input type="file" id="fileCat" accept=".csv,.xlsx,.xls">
-        <span class="drop-icon">📚</span>
-        <div class="drop-label">2️⃣ Archivo de Catálogo</div>
-        <div class="drop-hint">Excel o CSV con los libros disponibles</div>
-        <div class="drop-status" id="statusCat"></div>
-      </div>
-    </div>
+  <div class="drop-zone" id="dropRef">
+    <input type="file" id="fileRef" accept=".csv,.xlsx,.xls">
+    <div class="dz-icon">📄</div>
+    <div class="dz-label">Archivo de Referencias</div>
+    <div class="dz-hint">Excel (.xlsx, .xls) o CSV · arrastra o haz click</div>
+    <div class="dz-status" id="statusRef"></div>
+  </div>
 
+  <div class="col-map" id="colMapSection">
+    <div class="cfg-title" style="margin-bottom:10px;">🗂 Columna de referencias</div>
+    <label for="colSelect">Selecciona la columna que contiene las referencias bibliográficas:</label>
+    <select id="colSelect"></select>
+    <div class="help-text" id="colPreview"></div>
+  </div>
+
+  <div class="rate-warn" id="rateWarn">
+    ⚠ Procesando lista larga — esto puede tomar varios minutos. Cada referencia hace una consulta a la API de Claude + una búsqueda en el OPAC.
+  </div>
+
+  <div style="display:flex;align-items:center;margin-bottom:20px;">
     <button class="btn-primary" id="btnProcesar">🚀 INICIAR PROCESAMIENTO</button>
+    <button class="stop-btn" id="btnStop">⏹ Detener</button>
+  </div>
 
-    <!-- PROGRESS -->
-    <div class="progress-wrap" id="progressWrap">
-      <div class="progress-bar-bg">
-        <div class="progress-bar-fill" id="progressFill"></div>
+  <div class="progress-wrap" id="progressWrap">
+    <div class="prog-bg"><div class="prog-fill" id="progFill"></div></div>
+    <div class="prog-text" id="progText">Iniciando...</div>
+  </div>
+
+  <div class="results-section" id="resultsSection">
+    <div class="metrics" id="metricsGrid"></div>
+
+    <div class="section-title">📋 Resultados</div>
+
+    <div class="filters">
+      <div class="fgroup">
+        <label>Estado</label>
+        <select id="fEst"><option value="">Todos</option></select>
       </div>
-      <div class="progress-text" id="progressText">Procesando...</div>
-    </div>
-
-    <!-- COLUMN INFO -->
-    <div class="col-info" id="colInfo"></div>
-
-    <!-- RESULTS -->
-    <div class="results-section" id="resultsSection">
-      <div class="metrics-grid" id="metricsGrid"></div>
-
-      <div class="section-title">📋 Tabla de Resultados</div>
-
-      <div class="filters">
-        <div class="filter-group">
-          <label>Estado</label>
-          <select id="filterEstado">
-            <option value="">Todos</option>
-          </select>
-        </div>
-        <div class="filter-group">
-          <label>Tipo</label>
-          <select id="filterTipo">
-            <option value="">Todos</option>
-          </select>
-        </div>
-        <div class="search-box filter-group">
-          <label>Buscar referencia</label>
-          <input type="text" id="searchBox" placeholder="Filtrar por texto...">
-        </div>
-        <div class="filter-group" style="align-self:flex-end">
-          <span id="countLabel" style="font-size:0.78rem;color:var(--text-dim);font-family:'Source Code Pro',monospace;padding:8px 0;"></span>
-        </div>
+      <div class="fgroup">
+        <label>Tipo</label>
+        <select id="fTip"><option value="">Todos</option></select>
       </div>
-
-      <div class="table-wrap">
-        <table id="resultsTable">
-          <thead>
-            <tr>
-              <th onclick="sortTable('Referencia Original')">REFERENCIA ▾</th>
-              <th onclick="sortTable('Estado')">ESTADO</th>
-              <th onclick="sortTable('Stock')">STOCK</th>
-              <th onclick="sortTable('Título Catálogo')">TÍTULO CATÁLOGO</th>
-              <th onclick="sortTable('Autor Catálogo')">AUTOR</th>
-              <th onclick="sortTable('Tipo')">TIPO</th>
-              <th onclick="sortTable('Similitud')">SIMILITUD</th>
-              <th>ACCIONES</th>
-            </tr>
-          </thead>
-          <tbody id="tableBody"></tbody>
-        </table>
+      <div class="fgroup">
+        <label>Buscar</label>
+        <input type="text" id="fSearch" placeholder="Texto de la referencia...">
       </div>
-
-      <div id="paginationRow" style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;">
-        <div style="display:flex;gap:8px;">
-          <button class="btn-dl" onclick="prevPage()" id="btnPrev">← Anterior</button>
-          <button class="btn-dl" onclick="nextPage()" id="btnNext">Siguiente →</button>
-        </div>
-        <span id="pageLabel" style="font-size:0.8rem;color:var(--text-dim);font-family:'Source Code Pro',monospace;"></span>
-      </div>
-
-      <div class="dl-row">
-        <button class="btn-dl" id="btnDownload">📥 Descargar Excel Completo</button>
-      </div>
-
-      <div class="debug-section" id="debugSection">
-        <div class="section-title" style="font-size:0.9rem">🔧 Debug Info</div>
-        <pre id="debugPre"></pre>
+      <div class="fgroup" style="justify-content:flex-end;">
+        <span class="count-lbl" id="cntLbl"></span>
       </div>
     </div>
 
-    <div class="empty-state" id="emptyState">
-      <div class="es-icon">📭</div>
-      <p>Carga ambos archivos para comenzar el procesamiento.</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th onclick="srt('Referencia Original')">REFERENCIA</th>
+            <th onclick="srt('Estado')">ESTADO</th>
+            <th onclick="srt('Stock')">STOCK</th>
+            <th onclick="srt('Título encontrado')">TÍTULO EN CATÁLOGO</th>
+            <th onclick="srt('Autor encontrado')">AUTOR</th>
+            <th>TIPO</th>
+            <th>ENLACE OPAC</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
     </div>
 
-    <footer>Gestor Bibliotecario Inteligente · v2.0 HTML · Sin dependencias de servidor</footer>
-  </main>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;">
+      <div style="display:flex;gap:8px;">
+        <button class="btn-sec" onclick="prevPage()" id="btnPrev">← Anterior</button>
+        <button class="btn-sec" onclick="nextPage()" id="btnNext">Siguiente →</button>
+      </div>
+      <span id="pageLbl" style="font-size:0.77rem;color:var(--text-dim);font-family:'Source Code Pro',monospace;"></span>
+    </div>
+
+    <div class="dl-row">
+      <button class="btn-sec" id="btnDl">📥 Descargar Excel</button>
+    </div>
+  </div>
+
+  <div class="empty" id="emptyState">
+    <div class="empty-icon">📭</div>
+    <p>Sube tu archivo de referencias para comenzar.</p>
+  </div>
+
+  <footer>Gestor Bibliotecario PUCV · OPAC Live v3.0 · Búsqueda en tiempo real en catalogo.pucv.cl</footer>
+</main>
 </div>
 
 <script>
-// ══════════════════════════════════════════════
-// STATE
-// ══════════════════════════════════════════════
-let dfRef = null, dfCat = null;
-let allResults = [];
-let filteredResults = [];
-let sortKey = null, sortDir = 1;
-let currentPage = 0;
-const PAGE_SIZE = 50;
+// ── STATE ──────────────────────────────────────────────
+let rawData = [], allResults = [], filtered = [], sortKey = null, sortDir = 1, page = 0;
+const PAGE = 50;
+let stopFlag = false;
 
-// ══════════════════════════════════════════════
-// SLIDER
-// ══════════════════════════════════════════════
-const umbralSlider = document.getElementById('umbral');
-const umbralVal    = document.getElementById('umbralVal');
-umbralSlider.addEventListener('input', () => umbralVal.textContent = umbralSlider.value + '%');
+// ── FILE LOAD ──────────────────────────────────────────
+const drop = document.getElementById('dropRef');
+const fileInput = document.getElementById('fileRef');
+fileInput.addEventListener('change', e => handleFile(e.target.files[0]));
+drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('drag'); });
+drop.addEventListener('dragleave', () => drop.classList.remove('drag'));
+drop.addEventListener('drop', e => { e.preventDefault(); drop.classList.remove('drag'); handleFile(e.dataTransfer.files[0]); });
 
-// ══════════════════════════════════════════════
-// FILE LOADING
-// ══════════════════════════════════════════════
-function setupDrop(dropId, inputId, statusId, callback) {
-  const drop  = document.getElementById(dropId);
-  const input = document.getElementById(inputId);
-  const status = document.getElementById(statusId);
-
-  input.addEventListener('change', e => loadFile(e.target.files[0], drop, status, callback));
-
-  drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('drag'); });
-  drop.addEventListener('dragleave', () => drop.classList.remove('drag'));
-  drop.addEventListener('drop', e => {
-    e.preventDefault();
-    drop.classList.remove('drag');
-    if (e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0], drop, status, callback);
-  });
-}
-
-function loadFile(file, drop, status, callback) {
+function handleFile(file) {
   if (!file) return;
   const reader = new FileReader();
   reader.onload = e => {
     try {
       const wb = XLSX.read(e.target.result, { type: 'binary' });
       const ws = wb.Sheets[wb.SheetNames[0]];
-      const json = XLSX.utils.sheet_to_json(ws, { defval: '' });
-      // Normalizar nombres de columnas
-      const normalized = json.map(row => {
-        const out = {};
-        for (const [k, v] of Object.entries(row)) out[k.toLowerCase().trim()] = v;
-        return out;
-      });
+      rawData = XLSX.utils.sheet_to_json(ws, { defval: '' });
       drop.classList.add('loaded');
-      status.textContent = `✓ ${file.name} (${normalized.length} filas)`;
-      callback(normalized);
-      checkBothLoaded();
-    } catch(err) {
-      showAlert('error', `Error leyendo ${file.name}: ${err.message}`);
-    }
+      document.getElementById('statusRef').textContent = `✓ ${file.name} · ${rawData.length} filas`;
+      buildColSelector();
+    } catch(err) { showAlert('err', 'Error leyendo archivo: ' + err.message); }
   };
   reader.readAsBinaryString(file);
 }
 
-setupDrop('dropRef', 'fileRef', 'statusRef', data => dfRef = data);
-setupDrop('dropCat', 'fileCat', 'statusCat', data => dfCat = data);
+function buildColSelector() {
+  if (!rawData.length) return;
+  const cols = Object.keys(rawData[0]);
+  const sel = document.getElementById('colSelect');
+  sel.innerHTML = cols.map(c => `<option value="${c}">${c}</option>`).join('');
 
-function checkBothLoaded() {
-  const btn = document.getElementById('btnProcesar');
-  if (dfRef && dfCat) { btn.style.display = 'block'; document.getElementById('emptyState').style.display = 'none'; }
+  // Auto-detect best column
+  const auto = cols.find(c => /ref|bib|tit|cit|libro|obra/i.test(c)) || cols[0];
+  sel.value = auto;
+  updatePreview();
+
+  document.getElementById('colMapSection').style.display = 'block';
+  document.getElementById('btnProcesar').style.display = 'block';
+  document.getElementById('emptyState').style.display = 'none';
+
+  if (rawData.length > 30) document.getElementById('rateWarn').style.display = 'block';
 }
 
-// ══════════════════════════════════════════════
-// TEXT NORMALIZATION (mirrors Python logic)
-// ══════════════════════════════════════════════
-function normalizarTexto(t) {
-  if (t == null || t === '') return '';
-  return String(t)
-    .normalize('NFKD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase();
+document.getElementById('colSelect').addEventListener('change', updatePreview);
+function updatePreview() {
+  const col = document.getElementById('colSelect').value;
+  const sample = rawData.slice(0,3).map(r => `"${String(r[col]).slice(0,80)}"`).join('<br>');
+  document.getElementById('colPreview').innerHTML = `<strong>Muestra:</strong><br>${sample}`;
 }
 
-function limpiarTexto(t) {
-  if (t == null || t === '') return '';
-  let s = normalizarTexto(t);
-  s = s.replace(/https?:\/\/\S+|www\.\S+/g, '');
-  s = s.replace(/\(\d{4}\)/g, '');
-  s = s.replace(/[^a-z0-9\s]/g, ' ');
-  return s.replace(/\s+/g, ' ').trim();
-}
+// ── MAIN PROCESSING ────────────────────────────────────
+document.getElementById('btnProcesar').addEventListener('click', startProcessing);
+document.getElementById('btnStop').addEventListener('click', () => { stopFlag = true; });
 
-function esArticuloCientifico(t) {
-  const lower = String(t).toLowerCase();
-  return ['revista','journal','doi.org','issn','transactions','proceedings','vol.','no.','pp.','issue','quarterly','annual']
-    .some(ind => lower.includes(ind));
-}
+async function startProcessing() {
+  const apiKey = document.getElementById('apiKey').value.trim();
+  const opacBase = document.getElementById('opacUrl').value.trim().replace(/\/$/, '');
+  const col = document.getElementById('colSelect').value;
+  const delay = Math.max(500, parseInt(document.getElementById('delayMs').value) || 1500);
 
-// ══════════════════════════════════════════════
-// FUZZY MATCHING — token_set_ratio equivalent
-// ══════════════════════════════════════════════
-function levenshteinRatio(a, b) {
-  if (!a && !b) return 100;
-  if (!a || !b) return 0;
-  const la = a.length, lb = b.length;
-  if (la === 0 && lb === 0) return 100;
+  if (!apiKey) { showAlert('err', '❌ Ingresa tu API Key de Anthropic para continuar.'); return; }
+  if (!rawData.length) { showAlert('err', '❌ No hay datos cargados.'); return; }
 
-  const dp = Array.from({length: la + 1}, (_, i) => [i, ...Array(lb).fill(0)]);
-  for (let j = 0; j <= lb; j++) dp[0][j] = j;
-  for (let i = 1; i <= la; i++) {
-    for (let j = 1; j <= lb; j++) {
-      dp[i][j] = a[i-1] === b[j-1] ? dp[i-1][j-1]
-        : 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]);
-    }
-  }
-  const dist = dp[la][lb];
-  return Math.round((1 - dist / Math.max(la, lb)) * 100);
-}
-
-function tokenSetRatio(s1, s2) {
-  const tok1 = new Set(s1.split(/\s+/).filter(Boolean));
-  const tok2 = new Set(s2.split(/\s+/).filter(Boolean));
-  const inter = [...tok1].filter(t => tok2.has(t)).sort();
-  const rest1 = [...tok1].filter(t => !tok2.has(t)).sort();
-  const rest2 = [...tok2].filter(t => !tok1.has(t)).sort();
-
-  const interStr = inter.join(' ');
-  const str1 = [interStr, ...rest1].join(' ').trim();
-  const str2 = [interStr, ...rest2].join(' ').trim();
-
-  return Math.max(
-    levenshteinRatio(interStr, str1),
-    levenshteinRatio(interStr, str2),
-    levenshteinRatio(str1, str2)
-  );
-}
-
-function extractOne(query, choices) {
-  let bestScore = -1, bestKey = null;
-  for (const key of choices) {
-    const score = tokenSetRatio(query, key);
-    if (score > bestScore) { bestScore = score; bestKey = key; }
-  }
-  return { key: bestKey, score: bestScore };
-}
-
-// ══════════════════════════════════════════════
-// COLUMN DETECTION
-// ══════════════════════════════════════════════
-function detectarColumna(cols, posibles) {
-  const found = cols.find(c => posibles.some(p => c.includes(p)));
-  if (!found) throw new Error(`No se encontró columna. Se esperaba: ${posibles.join(', ')}. Disponibles: ${cols.join(', ')}`);
-  return found;
-}
-
-// ══════════════════════════════════════════════
-// MAIN PROCESSING (async for progress UI)
-// ══════════════════════════════════════════════
-function generarLinkCotizacion(ref) {
-  const q = ref.replace(/[^a-zA-Z0-9 ]/g,'').replace(/ +/g,'+');
-  return `https://www.bookfinder.com/search/?keywords=${q}&mode=basic`;
-}
-
-async function procesar() {
-  const umbral = parseInt(umbralSlider.value);
   clearAlerts();
-
-  // Detect columns
-  let colRef, colTit, colAut, colStock = null;
-  const refCols = Object.keys(dfRef[0] || {});
-  const catCols = Object.keys(dfCat[0] || {});
-
-  try {
-    colRef  = detectarColumna(refCols, ['ref','bib','titulo','title','citation']);
-    colTit  = detectarColumna(catCols, ['tit','title','nombre','libro']);
-    colAut  = detectarColumna(catCols, ['aut','author','autor','escritor']);
-    try { colStock = detectarColumna(catCols, ['ejem','copia','stock','cant','disponible']); }
-    catch { showAlert('warning', '⚠️ No se detectó columna de stock. Se asumirá stock = 1 para todos los libros.'); }
-  } catch(e) {
-    showAlert('error', '❌ Error en estructura de archivos: ' + e.message);
-    return;
-  }
-
-  document.getElementById('colInfo').style.display = 'block';
-  document.getElementById('colInfo').textContent =
-    `Columnas detectadas → Refs: [${colRef}] | Catálogo: [${colTit}], [${colAut}]` +
-    (colStock ? `, [${colStock}]` : '');
-
-  // Build catalog index
-  const catalogoStock = {};
-  const catalogoNombres = {};
-  const catalogoAutores = {};
-
-  for (const row of dfCat) {
-    const busqueda = limpiarTexto(String(row[colTit] || '') + ' ' + String(row[colAut] || ''));
-    if (!busqueda) continue;
-    const stk = colStock ? (parseFloat(row[colStock]) || 1) : 1;
-    catalogoStock[busqueda]   = (catalogoStock[busqueda]   || 0) + stk;
-    catalogoNombres[busqueda] = catalogoNombres[busqueda] || row[colTit];
-    catalogoAutores[busqueda] = catalogoAutores[busqueda] || row[colAut];
-  }
-
-  const listaClaves = Object.keys(catalogoStock);
-  const total = dfRef.length;
-
-  // Show progress
-  const progWrap  = document.getElementById('progressWrap');
-  const progFill  = document.getElementById('progressFill');
-  const progText  = document.getElementById('progressText');
-  progWrap.style.display = 'block';
+  stopFlag = false;
+  allResults = [];
   document.getElementById('btnProcesar').disabled = true;
+  document.getElementById('btnStop').style.display = 'inline-block';
+  document.getElementById('progressWrap').style.display = 'block';
+  document.getElementById('resultsSection').style.display = 'none';
 
-  const resultados = [];
+  const total = rawData.length;
 
-  // Process in chunks to keep UI responsive
-  const CHUNK = 30;
   for (let i = 0; i < total; i++) {
-    const row = dfRef[i];
-    const raw = String(row[colRef] || '');
-    const clean = limpiarTexto(raw);
-
-    const resultado = {
-      'Referencia Original': raw,
-      'Estado': 'NO ENCONTRADO',
-      'Stock': 0,
-      'Título Catálogo': '',
-      'Autor Catálogo': '',
-      'Tipo': 'Libro',
-      'Similitud': 0,
-      'Link Cotización': '',
-      'Observaciones': ''
-    };
-
-    if (esArticuloCientifico(raw)) {
-      Object.assign(resultado, {
-        'Tipo': 'Artículo Científico',
-        'Estado': 'VERIFICAR ONLINE',
-        'Observaciones': 'Posible paper/revista científica',
-        'Link Cotización': `https://scholar.google.com/scholar?q=${encodeURIComponent(raw)}`
-      });
-    } else if (clean.length > 3 && listaClaves.length > 0) {
-      const { key: bestKey, score: sim } = extractOne(clean, listaClaves);
-      if (sim >= umbral) {
-        const stk = Math.round(catalogoStock[bestKey] || 0);
-        Object.assign(resultado, {
-          'Estado': stk > 0 ? 'EN BIBLIOTECA' : 'FALTANTE (Stock 0)',
-          'Stock': stk,
-          'Título Catálogo': catalogoNombres[bestKey] || '',
-          'Autor Catálogo': catalogoAutores[bestKey] || '',
-          'Similitud': sim,
-          'Observaciones': `Match con ${sim}% de similitud`
-        });
-      } else {
-        Object.assign(resultado, {
-          'Estado': 'COTIZAR',
-          'Similitud': sim,
-          'Observaciones': `Similitud insuficiente (${sim}% < ${umbral}%)`,
-          'Link Cotización': generarLinkCotizacion(raw)
-        });
-      }
-    } else {
-      resultado['Observaciones'] = clean.length <= 3
-        ? 'Referencia demasiado corta para analizar'
-        : 'Catálogo vacío';
+    if (stopFlag) {
+      showAlert('warn', `⏹ Procesamiento detenido en referencia ${i} de ${total}.`);
+      break;
     }
 
-    resultados.push(resultado);
+    const ref = String(rawData[i][col] || '').trim();
+    const pct = Math.round(((i + 1) / total) * 100);
+    document.getElementById('progFill').style.width = pct + '%';
+    document.getElementById('progText').textContent = `Referencia ${i + 1} / ${total} — ${pct}%`;
 
-    // Update progress every chunk
-    if (i % CHUNK === 0 || i === total - 1) {
-      const pct = Math.round(((i + 1) / total) * 100);
-      progFill.style.width = pct + '%';
-      progText.textContent = `Procesando referencia ${i + 1} de ${total}... (${pct}%)`;
-      await new Promise(r => setTimeout(r, 0)); // yield
+    // Placeholder row while processing
+    allResults.push({ idx: i, 'Referencia Original': ref, Estado: '⏳ Procesando...', Stock: '–', 'Título encontrado': '', 'Autor encontrado': '', Tipo: '', 'URL OPAC': '', Observaciones: '' });
+    if (i === 0) renderAll();
+
+    let resultado;
+    try {
+      resultado = await consultarOPAC(ref, opacBase, apiKey);
+    } catch(err) {
+      resultado = { Estado: 'ERROR', Stock: 0, 'Título encontrado': '', 'Autor encontrado': '', Tipo: 'Libro', 'URL OPAC': '', Observaciones: String(err.message).slice(0, 120) };
     }
+
+    allResults[i] = { idx: i + 1, 'Referencia Original': ref, ...resultado };
+    renderAll();
+
+    if (i < total - 1) await sleep(delay);
   }
 
-  progWrap.style.display = 'none';
   document.getElementById('btnProcesar').disabled = false;
-
-  allResults = resultados;
-  renderResults(colRef, colTit, colAut, umbral);
+  document.getElementById('btnStop').style.display = 'none';
+  document.getElementById('progressWrap').style.display = 'none';
+  showAlert('ok', `✅ Proceso completado. ${allResults.length} referencias analizadas.`);
 }
 
-document.getElementById('btnProcesar').addEventListener('click', procesar);
+async function consultarOPAC(referencia, opacBase, apiKey) {
+  const systemPrompt = `Eres un asistente especialista en bibliotecología y referencias bibliográficas.
+Tu tarea es:
+1. Analizar la referencia bibliográfica recibida y extraer: título del libro y autor principal.
+2. Buscar el libro en el OPAC de la PUCV usando web_search con el titulo y autor extraídos.
+   - La URL base del OPAC es: ${opacBase}
+   - La URL de búsqueda de Koha es: ${opacBase}/cgi-bin/koha/opac-search.pl?q=PALABRAS_CLAVE
+   - Siempre busca con: site:${opacBase.replace('https://','').replace('http://','')} TITULO AUTOR
+3. Determina si el libro está en el catálogo, y si tiene ejemplares disponibles (stock).
+4. Responde SOLO con un JSON válido, sin texto adicional, sin markdown, sin backticks:
+{
+  "titulo_extraido": "...",
+  "autor_extraido": "...",
+  "es_articulo": false,
+  "encontrado": true,
+  "titulo_catalogo": "...",
+  "autor_catalogo": "...",
+  "stock": 2,
+  "url_opac": "https://...",
+  "estado": "EN BIBLIOTECA",
+  "observaciones": "..."
+}
+Estados posibles: "EN BIBLIOTECA", "FALTANTE (Stock 0)", "NO ENCONTRADO", "VERIFICAR ONLINE" (para artículos).
+Si es artículo científico (journal, revista, doi, pp., vol., proceedings), marca es_articulo: true y estado: "VERIFICAR ONLINE".
+Si no se encuentra, stock: 0, encontrado: false.`;
 
-// ══════════════════════════════════════════════
-// RENDER RESULTS
-// ══════════════════════════════════════════════
-function renderResults(colRef, colTit, colAut, umbral) {
+  const userMsg = `Referencia a buscar: "${referencia}"`;
+
+  const body = {
+    model: 'claude-sonnet-4-20250514',
+    max_tokens: 1000,
+    system: systemPrompt,
+    tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+    messages: [{ role: 'user', content: userMsg }]
+  };
+
+  const resp = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-beta': 'interleaved-thinking-2025-05-14' },
+    body: JSON.stringify(body)
+  });
+
+  if (!resp.ok) {
+    const errData = await resp.json().catch(() => ({}));
+    throw new Error(errData?.error?.message || `HTTP ${resp.status}`);
+  }
+
+  const data = await resp.json();
+
+  // Extract text from all content blocks
+  const textBlocks = (data.content || []).filter(b => b.type === 'text').map(b => b.text);
+  const fullText = textBlocks.join('\n');
+
+  // Parse JSON from response
+  const jsonMatch = fullText.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) throw new Error('Respuesta sin JSON válido');
+
+  const parsed = JSON.parse(jsonMatch[0]);
+  return {
+    Estado: parsed.estado || 'NO ENCONTRADO',
+    Stock: typeof parsed.stock === 'number' ? parsed.stock : 0,
+    'Título encontrado': parsed.titulo_catalogo || parsed.titulo_extraido || '',
+    'Autor encontrado': parsed.autor_catalogo || parsed.autor_extraido || '',
+    Tipo: parsed.es_articulo ? 'Artículo Científico' : 'Libro',
+    'URL OPAC': parsed.url_opac || '',
+    Observaciones: parsed.observaciones || ''
+  };
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ── RENDER ─────────────────────────────────────────────
+function renderAll() {
   const section = document.getElementById('resultsSection');
   section.style.display = 'block';
 
-  // Metrics
-  const total    = allResults.length;
-  const enBib    = allResults.filter(r => r['Stock'] > 0).length;
-  const cotizar  = allResults.filter(r => r['Estado'] === 'COTIZAR').length;
-  const articulos= allResults.filter(r => r['Tipo'] === 'Artículo Científico').length;
+  const done = allResults.filter(r => r.Estado !== '⏳ Procesando...');
+  const total = done.length;
+  const enBib = done.filter(r => r.Stock > 0).length;
+  const cotizar = done.filter(r => r.Estado === 'NO ENCONTRADO').length;
+  const articulos = done.filter(r => r.Tipo === 'Artículo Científico').length;
 
   document.getElementById('metricsGrid').innerHTML = [
-    { label: '📚 Total Referencias', val: total, delta: '' },
-    { label: '✅ En Biblioteca', val: enBib, delta: total > 0 ? Math.round(enBib/total*100) + '%' : '0%' },
-    { label: '⚠️ Por Cotizar', val: cotizar, delta: '' },
-    { label: '📄 Artículos', val: articulos, delta: '' },
-  ].map(m => `
-    <div class="metric-card">
-      <div class="m-label">${m.label}</div>
-      <div class="m-val">${m.val}</div>
-      ${m.delta ? `<div class="m-delta">${m.delta}</div>` : ''}
-    </div>
-  `).join('');
+    { l: '📚 Total', v: allResults.length, s: '' },
+    { l: '✅ En Biblioteca', v: enBib, s: total ? Math.round(enBib/total*100) + '%' : '' },
+    { l: '❓ No Encontrado', v: cotizar, s: '' },
+    { l: '📄 Artículos', v: articulos, s: '' },
+  ].map(m => `<div class="metric"><div class="m-label">${m.l}</div><div class="m-val">${m.v}</div>${m.s ? `<div class="m-sub">${m.s}</div>` : ''}</div>`).join('');
 
-  // Populate filter dropdowns
-  const estados = [...new Set(allResults.map(r => r['Estado']))].filter(Boolean);
-  const tipos   = [...new Set(allResults.map(r => r['Tipo']))].filter(Boolean);
-  const fEst = document.getElementById('filterEstado');
-  const fTip = document.getElementById('filterTipo');
-  fEst.innerHTML = '<option value="">Todos los estados</option>' + estados.map(e => `<option>${e}</option>`).join('');
-  fTip.innerHTML = '<option value="">Todos los tipos</option>' + tipos.map(t => `<option>${t}</option>`).join('');
-
-  // Debug
-  if (document.getElementById('debugMode').checked) {
-    document.getElementById('debugSection').style.display = 'block';
-    document.getElementById('debugPre').textContent = JSON.stringify({
-      total, enBib, cotizar, articulos, umbral,
-      columnas: { referencias: colRef, titulo: colTit, autor: colAut }
-    }, null, 2);
-  }
+  // Fill filters
+  const estados = [...new Set(allResults.map(r => r.Estado).filter(e => e !== '⏳ Procesando...'))];
+  const tipos   = [...new Set(allResults.map(r => r.Tipo).filter(Boolean))];
+  const fe = document.getElementById('fEst');
+  const ft = document.getElementById('fTip');
+  const curEst = fe.value, curTip = ft.value;
+  fe.innerHTML = '<option value="">Todos los estados</option>' + estados.map(e => `<option ${e===curEst?'selected':''}>${e}</option>`).join('');
+  ft.innerHTML = '<option value="">Todos los tipos</option>'  + tipos.map(t => `<option ${t===curTip?'selected':''}>${t}</option>`).join('');
 
   applyFilters();
-  showAlert('success', `✅ Proceso completado. ${total} referencias procesadas.`);
 }
 
 function applyFilters() {
-  const est  = document.getElementById('filterEstado').value;
-  const tip  = document.getElementById('filterTipo').value;
-  const srch = document.getElementById('searchBox').value.toLowerCase();
-
-  filteredResults = allResults.filter(r =>
-    (!est || r['Estado'] === est) &&
-    (!tip || r['Tipo'] === tip) &&
+  const est = document.getElementById('fEst').value;
+  const tip = document.getElementById('fTip').value;
+  const srch = document.getElementById('fSearch').value.toLowerCase();
+  filtered = allResults.filter(r =>
+    (!est || r.Estado === est) &&
+    (!tip || r.Tipo === tip) &&
     (!srch || r['Referencia Original'].toLowerCase().includes(srch))
   );
-
-  currentPage = 0;
+  page = 0;
   renderTable();
 }
+['fEst','fTip'].forEach(id => document.getElementById(id).addEventListener('change', applyFilters));
+document.getElementById('fSearch').addEventListener('input', applyFilters);
 
-['filterEstado','filterTipo'].forEach(id =>
-  document.getElementById(id).addEventListener('change', applyFilters));
-document.getElementById('searchBox').addEventListener('input', applyFilters);
-
-function sortTable(key) {
-  if (sortKey === key) sortDir *= -1;
-  else { sortKey = key; sortDir = 1; }
-  filteredResults.sort((a, b) => {
+function srt(key) {
+  if (sortKey === key) sortDir *= -1; else { sortKey = key; sortDir = 1; }
+  filtered.sort((a,b) => {
     const av = a[key], bv = b[key];
     if (typeof av === 'number') return (av - bv) * sortDir;
     return String(av).localeCompare(String(bv)) * sortDir;
   });
-  currentPage = 0;
-  renderTable();
+  page = 0; renderTable();
 }
 
 function renderTable() {
-  const start = currentPage * PAGE_SIZE;
-  const page  = filteredResults.slice(start, start + PAGE_SIZE);
-  const total = filteredResults.length;
+  const start = page * PAGE;
+  const slice = filtered.slice(start, start + PAGE);
+  const total = filtered.length;
 
-  document.getElementById('countLabel').textContent =
-    `Mostrando ${start + 1}–${Math.min(start + PAGE_SIZE, total)} de ${total}`;
-  document.getElementById('pageLabel').textContent =
-    `Página ${currentPage + 1} de ${Math.ceil(total / PAGE_SIZE) || 1}`;
-  document.getElementById('btnPrev').disabled = currentPage === 0;
-  document.getElementById('btnNext').disabled = start + PAGE_SIZE >= total;
+  document.getElementById('cntLbl').textContent = `Mostrando ${start+1}–${Math.min(start+PAGE, total)} de ${total}`;
+  document.getElementById('pageLbl').textContent = `Página ${page+1} de ${Math.max(1, Math.ceil(total/PAGE))}`;
+  document.getElementById('btnPrev').disabled = page === 0;
+  document.getElementById('btnNext').disabled = start + PAGE >= total;
 
-  const body = document.getElementById('tableBody');
-  body.innerHTML = page.map(r => {
-    const badgeMap = {
-      'EN BIBLIOTECA':      'green',
-      'FALTANTE (Stock 0)': 'red',
-      'COTIZAR':            'amber',
-      'VERIFICAR ONLINE':   'blue',
-      'NO ENCONTRADO':      'gray',
-    };
-    const color = badgeMap[r['Estado']] || 'gray';
-    const simColor = r['Similitud'] >= 80 ? '#2ecc71' : r['Similitud'] >= 60 ? '#f39c12' : '#e74c3c';
+  const badgeMap = {
+    'EN BIBLIOTECA':      'b-green',
+    'FALTANTE (Stock 0)': 'b-red',
+    'NO ENCONTRADO':      'b-amber',
+    'VERIFICAR ONLINE':   'b-blue',
+    'ERROR':              'b-red',
+    '⏳ Procesando...':   'b-spin',
+  };
 
-    const link = r['Link Cotización'] ? `<a href="${r['Link Cotización']}" target="_blank" class="cotizar-link">🔗 Ver</a>` : '';
-
+  document.getElementById('tbody').innerHTML = slice.map(r => {
+    const cls = badgeMap[r.Estado] || 'b-gray';
+    const link = r['URL OPAC'] ? `<a href="${escH(r['URL OPAC'])}" target="_blank" class="cat-link opac-url">Ver en OPAC</a>` : '';
     return `<tr>
-      <td class="td-ref">${escHtml(r['Referencia Original'])}</td>
-      <td><span class="badge badge-${color}">${escHtml(r['Estado'])}</span></td>
-      <td class="td-small">${r['Stock']}</td>
-      <td style="max-width:220px;word-break:break-word">${escHtml(r['Título Catálogo'])}</td>
-      <td class="td-small" style="max-width:140px;word-break:break-word">${escHtml(r['Autor Catálogo'])}</td>
-      <td class="td-small">${escHtml(r['Tipo'])}</td>
-      <td>
-        <div class="sim-bar">
-          <div class="sim-bar-bg"><div class="sim-bar-fill" style="width:${r['Similitud']}%;background:${simColor}"></div></div>
-          <span class="td-small" style="color:${simColor}">${r['Similitud']}%</span>
-        </div>
-      </td>
+      <td class="small-mono" style="color:var(--text-dim)">${r.idx}</td>
+      <td class="ref-cell">${escH(r['Referencia Original'])}</td>
+      <td><span class="badge ${cls}">${escH(r.Estado)}</span></td>
+      <td class="small-mono">${r.Stock === '–' ? '–' : r.Stock}</td>
+      <td style="max-width:200px;word-break:break-word">${escH(r['Título encontrado'])}</td>
+      <td style="max-width:140px;word-break:break-word;font-size:0.78rem">${escH(r['Autor encontrado'])}</td>
+      <td class="small-mono">${escH(r.Tipo)}</td>
       <td>${link}</td>
     </tr>`;
   }).join('');
 }
 
-function prevPage() { if (currentPage > 0) { currentPage--; renderTable(); } }
-function nextPage() { if ((currentPage + 1) * PAGE_SIZE < filteredResults.length) { currentPage++; renderTable(); } }
+function prevPage() { if (page > 0) { page--; renderTable(); } }
+function nextPage() { if ((page+1)*PAGE < filtered.length) { page++; renderTable(); } }
 
-// ══════════════════════════════════════════════
-// DOWNLOAD EXCEL
-// ══════════════════════════════════════════════
-document.getElementById('btnDownload').addEventListener('click', () => {
-  const ws = XLSX.utils.json_to_sheet(allResults);
-
-  // Column widths
-  ws['!cols'] = [
-    {wch:50},{wch:22},{wch:8},{wch:35},{wch:25},{wch:18},{wch:10},{wch:40},{wch:40}
-  ];
-
+// ── DOWNLOAD ───────────────────────────────────────────
+document.getElementById('btnDl').addEventListener('click', () => {
+  const exportData = allResults.map(r => ({
+    '#': r.idx,
+    'Referencia Original': r['Referencia Original'],
+    'Estado': r.Estado,
+    'Stock': r.Stock,
+    'Título en Catálogo': r['Título encontrado'],
+    'Autor en Catálogo': r['Autor encontrado'],
+    'Tipo': r.Tipo,
+    'URL OPAC': r['URL OPAC'],
+    'Observaciones': r.Observaciones,
+  }));
+  const ws = XLSX.utils.json_to_sheet(exportData);
+  ws['!cols'] = [{wch:4},{wch:55},{wch:22},{wch:7},{wch:40},{wch:28},{wch:18},{wch:50},{wch:40}];
   const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Resultados');
-
-  const now = new Date();
-  const ts = now.toISOString().slice(0,10).replace(/-/g,'');
-  XLSX.writeFile(wb, `Resultados_Biblioteca_${ts}.xlsx`);
+  XLSX.utils.book_append_sheet(wb, ws, 'Resultados OPAC');
+  const ts = new Date().toISOString().slice(0,10).replace(/-/g,'');
+  XLSX.writeFile(wb, `Resultados_OPAC_PUCV_${ts}.xlsx`);
 });
 
-// ══════════════════════════════════════════════
-// DEBUG TOGGLE
-// ══════════════════════════════════════════════
-document.getElementById('debugMode').addEventListener('change', function() {
-  const ds = document.getElementById('debugSection');
-  if (!this.checked) ds.style.display = 'none';
-  else if (allResults.length) ds.style.display = 'block';
-});
-
-// ══════════════════════════════════════════════
-// ALERTS
-// ══════════════════════════════════════════════
+// ── ALERTS ─────────────────────────────────────────────
 function showAlert(type, msg) {
-  const div = document.createElement('div');
-  div.className = `alert alert-${type}`;
-  div.innerHTML = `<span>${msg}</span>`;
-  document.getElementById('alerts').appendChild(div);
-  if (type !== 'error') setTimeout(() => div.remove(), 6000);
+  const map = { err:'a-err', warn:'a-warn', ok:'a-ok', info:'a-info' };
+  const d = document.createElement('div');
+  d.className = `alert ${map[type]||'a-info'}`;
+  d.innerHTML = `<span>${msg}</span>`;
+  document.getElementById('alerts').appendChild(d);
+  if (type !== 'err') setTimeout(() => d.remove(), 8000);
 }
 function clearAlerts() { document.getElementById('alerts').innerHTML = ''; }
-
-function escHtml(s) {
-  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
+function escH(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 </script>
 </body>
 </html>
