@@ -404,6 +404,10 @@ footer{text-align:center;padding:14px;font-size:0.65rem;color:var(--muted);borde
             BuscaLibre Chile
           </label>
           <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:13px;color:var(--text);">
+            <input type="checkbox" id="cot_amazon" style="width:15px;height:15px;accent-color:var(--accent);">
+            Amazon
+          </label>
+          <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:13px;color:var(--text);">
             <input type="checkbox" id="cot_mercadolibre" style="width:15px;height:15px;accent-color:var(--accent);">
             MercadoLibre
           </label>
@@ -810,15 +814,17 @@ async function cotizarLibro() {
   var autor   = document.getElementById('cot_autor').value.trim();
   var bf      = document.getElementById('cot_bookfinder').checked;
   var bl      = document.getElementById('cot_buscalibre').checked;
+  var amz     = document.getElementById('cot_amazon').checked;
   var ml      = document.getElementById('cot_mercadolibre').checked;
   var intv    = parseInt(document.getElementById('cot_intervalo').value) * 1000;
 
   if (!isbn && !titulo) { alert('Ingresa al menos el ISBN o el título del libro.'); return; }
 
   var sitios = [];
-  if (bf) sitios.push({ nombre: 'BookFinder',     url: isbn ? 'https://www.bookfinder.com/search/?isbn='+isbn+'&mode=basic&st=sr&ac=qr' : 'https://www.bookfinder.com/search/?author='+encodeURIComponent(autor)+'&title='+encodeURIComponent(titulo)+'&mode=basic&st=sr&ac=qr' });
-  if (bl) sitios.push({ nombre: 'BuscaLibre',     url: isbn ? 'https://www.buscalibre.cl/libros/search?q='+isbn : 'https://www.buscalibre.cl/libros/search?q='+encodeURIComponent(titulo+' '+autor) });
-  if (ml) sitios.push({ nombre: 'MercadoLibre',   url: isbn ? 'https://listado.mercadolibre.cl/'+isbn : 'https://listado.mercadolibre.cl/'+encodeURIComponent(titulo+' '+autor) });
+  if (bf)  sitios.push({ nombre: 'BookFinder',   url: isbn ? 'https://www.bookfinder.com/search/?isbn='+isbn+'&mode=basic&st=sr&ac=qr' : 'https://www.bookfinder.com/search/?author='+encodeURIComponent(autor)+'&title='+encodeURIComponent(titulo)+'&mode=basic&st=sr&ac=qr' });
+  if (bl)  sitios.push({ nombre: 'BuscaLibre',   url: isbn ? 'https://www.buscalibre.cl/libros/search?q='+isbn : 'https://www.buscalibre.cl/libros/search?q='+encodeURIComponent(titulo+' '+autor) });
+  if (amz) sitios.push({ nombre: 'Amazon',       url: isbn ? 'https://www.amazon.com/s?k='+isbn : 'https://www.amazon.com/s?k='+encodeURIComponent(titulo+' '+autor)+'&i=stripbooks' });
+  if (ml)  sitios.push({ nombre: 'MercadoLibre', url: isbn ? 'https://listado.mercadolibre.cl/'+isbn : 'https://listado.mercadolibre.cl/'+encodeURIComponent(titulo+' '+autor) });
 
   if (!sitios.length) { alert('Selecciona al menos un sitio de búsqueda.'); return; }
 
