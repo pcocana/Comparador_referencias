@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gestor Bibliotecario PUCV</title>
+<title>Bibliografía Académica · Biblioteca PUCV</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -109,7 +109,7 @@ select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(3
 .pt{font-size:0.7rem;color:var(--muted);font-family:'DM Mono',monospace;}
 
 /* ── Métricas ─────────────────────────────────────────────────────────── */
-.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.metrics{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px;}
 .metric{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;box-shadow:0 1px 3px rgba(0,0,0,.04);}
 .ml{font-size:0.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px;font-weight:600;}
 .mv{font-family:'DM Sans',sans-serif;font-size:1.9rem;font-weight:700;color:var(--navy);letter-spacing:-.03em;line-height:1.1;}
@@ -186,11 +186,24 @@ footer{text-align:center;padding:14px;font-size:0.65rem;color:var(--muted);borde
 <header>
   <div class="hdr-icon">📚</div>
   <div>
-    <h1>Gestor Bibliotecario PUCV</h1>
-    <p>Match inteligente referencias ↔ catálogo · Sin internet · Sin API key</p>
+    <h1>Bibliografía Académica · Biblioteca PUCV</h1>
+    <p>Verificación de catálogo · Cotizador de libros · Sin API key</p>
   </div>
   <span class="ver">v4.1</span>
 </header>
+
+<!-- Pestañas -->
+<div id="tabBar" style="background:var(--navy);display:flex;padding:0 20px;gap:2px;">
+  <button id="tab-gestor" onclick="switchTab('gestor')"
+    style="padding:12px 22px;border:none;background:rgba(255,255,255,.12);color:rgba(255,255,255,.7);font-family:'Inter',sans-serif;font-size:12.5px;font-weight:600;cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;letter-spacing:.01em;">
+    🗂️ Verificador de Catálogo
+  </button>
+  <button id="tab-cotizador" onclick="switchTab('cotizador')"
+    style="padding:12px 22px;border:none;background:transparent;color:rgba(255,255,255,.5);font-family:'Inter',sans-serif;font-size:12.5px;font-weight:600;cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;letter-spacing:.01em;">
+    💰 Cotizador de Libros
+  </button>
+</div>
+<div id="panel-gestor">
 <div class="layout">
 <aside>
   <div>
@@ -313,6 +326,10 @@ footer{text-align:center;padding:14px;font-size:0.65rem;color:var(--muted);borde
     <div class="dlrow">
       <button class="bts" id="btnDlAll">📥 Descargar Excel completo</button>
       <button class="bts" id="btnDlNoEnc">📥 Solo no encontrados</button>
+      <button class="bts" id="btnEnvCot" onclick="enviarAlCotizador()"
+        style="background:var(--accent);color:#fff;border-color:var(--accent);font-weight:700;display:none;">
+        💰 Enviar no encontrados al Cotizador
+      </button>
     </div>
   </div>
   <div class="empty" id="emptyState">
@@ -323,7 +340,107 @@ footer{text-align:center;padding:14px;font-size:0.65rem;color:var(--muted);borde
 </main>
 </div>
 
+</div><!-- /layout -->
+</div><!-- /panel-gestor -->
+
+<!-- ══════════════════════════════════════
+     PANEL COTIZADOR
+══════════════════════════════════════ -->
+<div id="panel-cotizador" style="display:none;background:var(--bg);min-height:calc(100vh - 112px);padding:28px 36px;">
+
+  <div style="max-width:620px;margin:0 auto;">
+
+    <!-- Cola de no encontrados -->
+    <div id="cot_cola_wrap" style="display:none;background:#fff;border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin-bottom:18px;box-shadow:0 1px 4px rgba(0,0,0,.05);">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <div>
+          <div style="font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:700;color:var(--navy);">📋 No encontrados en catálogo</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px;">Cargados desde el verificador · Haz clic en un libro para cotizarlo</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <span id="cot_cola_badge" style="background:var(--accent-lt);color:var(--accent);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;font-family:'DM Mono',monospace;"></span>
+          <button onclick="cotizarTodaLaCola()" id="btnCotizarTodos"
+            style="font-size:12px;font-weight:600;color:#fff;background:var(--accent);border:none;border-radius:6px;padding:6px 14px;cursor:pointer;">
+            ⚡ Cotizar todos
+          </button>
+          <button onclick="limpiarCola()"
+            style="font-size:11px;color:var(--muted);background:none;border:1px solid var(--border2);border-radius:6px;padding:5px 10px;cursor:pointer;">
+            ✕ Limpiar
+          </button>
+        </div>
+      </div>
+      <div id="cot_cola_list" style="max-height:280px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;"></div>
+    </div>
+
+    <!-- Formulario principal -->
+    <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:24px;box-shadow:0 1px 4px rgba(0,0,0,.05);margin-bottom:18px;">
+      <div style="font-family:'DM Sans',sans-serif;font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:4px;">Buscar precio de un libro</div>
+      <div style="font-size:11.5px;color:var(--muted);margin-bottom:18px;">Abre automáticamente los sitios de cotización con la búsqueda lista.</div>
+
+      <label class="fl">ISBN (recomendado)</label>
+      <input type="text" id="cot_isbn" placeholder="Ej: 9788491050391" style="margin-bottom:14px;">
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
+        <div>
+          <label class="fl">Título</label>
+          <input type="text" id="cot_titulo" placeholder="Ej: Cálculo diferencial...">
+        </div>
+        <div>
+          <label class="fl">Autor</label>
+          <input type="text" id="cot_autor" placeholder="Ej: Stewart, J.">
+        </div>
+      </div>
+
+      <!-- Sitios -->
+      <div style="background:var(--accent-lt);border:1px solid #bfdbfe;border-radius:8px;padding:12px 16px;margin-bottom:14px;">
+        <div style="font-size:10.5px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">Sitios de búsqueda</div>
+        <div style="display:flex;gap:20px;flex-wrap:wrap;">
+          <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:13px;color:var(--text);">
+            <input type="checkbox" id="cot_bookfinder" checked style="width:15px;height:15px;accent-color:var(--accent);">
+            BookFinder
+          </label>
+          <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:13px;color:var(--text);">
+            <input type="checkbox" id="cot_buscalibre" checked style="width:15px;height:15px;accent-color:var(--accent);">
+            BuscaLibre Chile
+          </label>
+          <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:13px;color:var(--text);">
+            <input type="checkbox" id="cot_mercadolibre" style="width:15px;height:15px;accent-color:var(--accent);">
+            MercadoLibre
+          </label>
+        </div>
+      </div>
+
+      <!-- Intervalo -->
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;">
+        <span style="font-size:12.5px;color:var(--text-md);white-space:nowrap;">Intervalo entre pestañas: <strong id="cot_intervalo_lbl">3s</strong></span>
+        <input type="range" id="cot_intervalo" min="2" max="10" value="3" oninput="document.getElementById('cot_intervalo_lbl').textContent=this.value+'s'" style="flex:1;accent-color:var(--accent);">
+      </div>
+
+      <button onclick="cotizarLibro()" id="cot_btn"
+        style="width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 2px 8px rgba(37,99,235,.3);transition:background .2s;">
+        🔍 Buscar precios
+      </button>
+    </div>
+
+    <!-- Progreso -->
+    <div id="cot_prog" style="display:none;background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px 20px;">
+      <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:8px;" id="cot_prog_txt">Abriendo...</div>
+      <div style="background:var(--border);border-radius:4px;height:6px;overflow:hidden;">
+        <div id="cot_prog_fill" style="height:100%;background:linear-gradient(90deg,var(--accent),#60a5fa);border-radius:4px;width:0%;transition:width .3s;"></div>
+      </div>
+    </div>
+
+    <!-- Historial -->
+    <div id="cot_historial_wrap" style="display:none;background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-top:14px;">
+      <div style="font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px;">Búsquedas recientes</div>
+      <div id="cot_historial_list"></div>
+    </div>
+
+  </div>
+</div>
+
 <script>
+
 var STOP = {de:1,del:1,la:1,el:1,los:1,las:1,un:1,una:1,y:1,en:1,con:1,por:1,para:1,al:1,a:1,e:1,o:1,es:1,su:1,se:1,que:1,lo:1,le:1,si:1,no:1,vol:1,ed:1,eds:1,edicion:1,edition:1,primera:1,segunda:1,tercera:1,cuarta:1,quinta:1,sexta:1,septima:1,octava:1,novena:1,decima:1,editorial:1,editores:1,cengage:1,learning:1,mcgraw:1,hill:1,pearson:1,limusa:1,alfaomega:1,graw:1,mc:1,sa:1,soc:1,chile:1,mexico:1,barcelona:1,colombia:1,argentina:1,impa:1,ediciones:1,universidad:1,catolica:1,valparaiso:1,pontificia:1,pucv:1,ucv:1,gestion:1,reverte:1,thomson:1,springer:1,addison:1,wiley:1,potenciando:1,pensamiento:1,critico:1,traves:1,coleccion:1,matematica:1};
 var CONN = {y:1,and:1,et:1,von:1,van:1,de:1,del:1,la:1,los:1,las:1};
 var THRESHOLD = 60;
@@ -569,11 +686,21 @@ function renderAll(){
   var total=allResults.length;
   var enBib=allResults.filter(function(r){return r.estado==='EN BIBLIOTECA';}).length;
   var noEnc=allResults.filter(function(r){return r.estado==='NO ENCONTRADO';}).length;
+  var sinStock=allResults.filter(function(r){return r.estado==='SIN STOCK';}).length;
   var arts=allResults.filter(function(r){return r.estado==='ARTÍCULO CIENTÍFICO';}).length;
+  // Mostrar botón enviar al cotizador si hay no encontrados o sin stock
+  var btnCot = document.getElementById('btnEnvCot');
+  if (noEnc + sinStock > 0) {
+    btnCot.style.display = 'inline-block';
+    btnCot.textContent = '💰 Enviar ' + (noEnc + sinStock) + ' no encontrados al Cotizador';
+  } else {
+    btnCot.style.display = 'none';
+  }
   document.getElementById('metricsGrid').innerHTML=[
     {l:'📚 Total',v:total,s:''},
     {l:'✅ En Biblioteca',v:enBib,s:total?Math.round(enBib/total*100)+'%':''},
     {l:'❓ No Encontrado',v:noEnc,s:''},
+    {l:'🔴 Sin Stock',v:sinStock,s:''},
     {l:'📄 Artículos',v:arts,s:''},
   ].map(function(m){return'<div class="metric"><div class="ml">'+m.l+'</div><div class="mv">'+m.v+'</div>'+(m.s?'<div class="ms">'+m.s+'</div>':'')+'</div>';}).join('');
 
@@ -644,7 +771,190 @@ function showAlert(t,msg){
   if(t!=='e')setTimeout(function(){if(d.parentNode)d.parentNode.removeChild(d);},6000);
 }
 function clearAlerts(){document.getElementById('alerts').innerHTML='';}
+
 function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+var activeTab = 'gestor';
+function switchTab(tab) {
+  activeTab = tab;
+  document.getElementById('panel-gestor').style.display    = tab === 'gestor'    ? 'block' : 'none';
+  document.getElementById('panel-cotizador').style.display = tab === 'cotizador' ? 'block' : 'none';
+
+  var tg = document.getElementById('tab-gestor');
+  var tc = document.getElementById('tab-cotizador');
+  if (tab === 'gestor') {
+    tg.style.background   = 'rgba(255,255,255,.12)';
+    tg.style.color        = '#fff';
+    tg.style.borderBottom = '3px solid #d4a030';
+    tc.style.background   = 'transparent';
+    tc.style.color        = 'rgba(255,255,255,.5)';
+    tc.style.borderBottom = '3px solid transparent';
+  } else {
+    tc.style.background   = 'rgba(255,255,255,.12)';
+    tc.style.color        = '#fff';
+    tc.style.borderBottom = '3px solid #d4a030';
+    tg.style.background   = 'transparent';
+    tg.style.color        = 'rgba(255,255,255,.5)';
+    tg.style.borderBottom = '3px solid transparent';
+  }
+}
+// Activar pestaña inicial
+switchTab('gestor');
+
+// ── Cotizador ─────────────────────────────────────────────────────────────────
+var cotHistorial = [];
+
+async function cotizarLibro() {
+  var isbn    = document.getElementById('cot_isbn').value.trim().replace(/[-\s]/g, '');
+  var titulo  = document.getElementById('cot_titulo').value.trim();
+  var autor   = document.getElementById('cot_autor').value.trim();
+  var bf      = document.getElementById('cot_bookfinder').checked;
+  var bl      = document.getElementById('cot_buscalibre').checked;
+  var ml      = document.getElementById('cot_mercadolibre').checked;
+  var intv    = parseInt(document.getElementById('cot_intervalo').value) * 1000;
+
+  if (!isbn && !titulo) { alert('Ingresa al menos el ISBN o el título del libro.'); return; }
+
+  var sitios = [];
+  if (bf) sitios.push({ nombre: 'BookFinder',     url: isbn ? 'https://www.bookfinder.com/search/?isbn='+isbn+'&mode=basic&st=sr&ac=qr' : 'https://www.bookfinder.com/search/?author='+encodeURIComponent(autor)+'&title='+encodeURIComponent(titulo)+'&mode=basic&st=sr&ac=qr' });
+  if (bl) sitios.push({ nombre: 'BuscaLibre',     url: isbn ? 'https://www.buscalibre.cl/libros/search?q='+isbn : 'https://www.buscalibre.cl/libros/search?q='+encodeURIComponent(titulo+' '+autor) });
+  if (ml) sitios.push({ nombre: 'MercadoLibre',   url: isbn ? 'https://listado.mercadolibre.cl/'+isbn : 'https://listado.mercadolibre.cl/'+encodeURIComponent(titulo+' '+autor) });
+
+  if (!sitios.length) { alert('Selecciona al menos un sitio de búsqueda.'); return; }
+
+  var prog     = document.getElementById('cot_prog');
+  var progTxt  = document.getElementById('cot_prog_txt');
+  var progFill = document.getElementById('cot_prog_fill');
+  prog.style.display = 'block';
+
+  for (var i = 0; i < sitios.length; i++) {
+    progTxt.textContent  = 'Abriendo ' + sitios[i].nombre + '... (' + (i+1) + '/' + sitios.length + ')';
+    progFill.style.width = Math.round(((i+1)/sitios.length)*100) + '%';
+    window.open(sitios[i].url, '_blank');
+    if (i < sitios.length - 1) await new Promise(function(r){ setTimeout(r, intv); });
+  }
+
+  progTxt.textContent  = '✅ Completado — ' + sitios.length + ' sitio(s) abiertos';
+  progFill.style.width = '100%';
+  setTimeout(function(){ prog.style.display = 'none'; }, 3500);
+
+  // Guardar en historial
+  var entrada = { label: titulo || isbn, isbn: isbn, titulo: titulo, autor: autor };
+  cotHistorial.unshift(entrada);
+  if (cotHistorial.length > 8) cotHistorial.pop();
+  renderHistorial();
+}
+
+function cotizarDesdeHistorial(i) {
+  var h = cotHistorial[i];
+  document.getElementById('cot_isbn').value   = h.isbn   || '';
+  document.getElementById('cot_titulo').value = h.titulo || '';
+  document.getElementById('cot_autor').value  = h.autor  || '';
+  cotizarLibro();
+}
+
+// ── Cola de no encontrados ────────────────────────────────────────────────────
+var cotCola = [];
+
+function enviarAlCotizador() {
+  var noEnc = allResults.filter(function(r){ return r.estado === 'NO ENCONTRADO' || r.estado === 'SIN STOCK'; });
+  if (!noEnc.length) { showAlert('w', 'No hay referencias sin encontrar para enviar.'); return; }
+
+  // Parsear título y autor de cada referencia
+  cotCola = noEnc.map(function(r) {
+    var p = parseRef(r.ref);
+    // Reconstruir título legible desde las palabras clave y la referencia original
+    var titulo = r.ref;
+    // Intentar extraer el título entre el año y el primer punto/editorial
+    var ym = r.ref.match(/\(\s*\d{4}\s*\)\.\s*(.+)/);
+    if (ym) {
+      var rest = ym[1];
+      // Cortar antes de editorial (punto seguido de mayúscula corta)
+      var corte = rest.search(/\.\s+[A-ZÁÉÍÓÚ][a-z]/);
+      titulo = corte > 10 ? rest.slice(0, corte).trim() : rest.split('.')[0].trim();
+    }
+    // Extraer apellido principal
+    var autorStr = p.surnames.length ? p.surnames[0].charAt(0).toUpperCase() + p.surnames[0].slice(1) : '';
+    return { ref: r.ref, titulo: titulo, autor: autorStr, cotizado: false };
+  });
+
+  renderCola();
+  switchTab('cotizador');
+  showAlert('o', '✅ ' + cotCola.length + ' referencias enviadas al cotizador.');
+}
+
+function renderCola() {
+  var wrap = document.getElementById('cot_cola_wrap');
+  var list = document.getElementById('cot_cola_list');
+  var badge = document.getElementById('cot_cola_badge');
+  if (!cotCola.length) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'block';
+  var pendientes = cotCola.filter(function(c){ return !c.cotizado; }).length;
+  badge.textContent = pendientes + ' pendientes / ' + cotCola.length + ' total';
+  list.innerHTML = cotCola.map(function(item, i) {
+    var bg = item.cotizado ? '#f8fafc' : '#fff';
+    var textColor = item.cotizado ? 'var(--muted)' : 'var(--text)';
+    return '<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-bottom:1px solid var(--border);background:'+bg+';cursor:'+(item.cotizado?'default':'pointer')+';" '
+      + (item.cotizado ? '' : 'onclick="cargarEnCotizador('+i+')" title="Clic para cotizar este libro"')
+      + '>'
+      + '<span style="font-size:16px;">'+(item.cotizado ? '✅' : '📖')+'</span>'
+      + '<div style="flex:1;min-width:0;">'
+      + '<div style="font-size:12.5px;font-weight:600;color:'+textColor+';white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="'+escH(item.titulo)+'">'+escH(item.titulo.length > 72 ? item.titulo.slice(0,72)+'…' : item.titulo)+'</div>'
+      + (item.autor ? '<div style="font-size:11px;color:var(--muted);">'+escH(item.autor)+'</div>' : '')
+      + '</div>'
+      + (item.cotizado
+        ? '<span style="font-size:10.5px;color:var(--green);font-weight:600;white-space:nowrap;">Cotizado</span>'
+        : '<button onclick="event.stopPropagation();cargarEnCotizador('+i+')" style="font-size:11px;color:var(--accent);background:var(--accent-lt);border:1px solid #bfdbfe;border-radius:5px;padding:4px 12px;cursor:pointer;white-space:nowrap;font-weight:600;">Cotizar →</button>')
+      + '</div>';
+  }).join('');
+}
+
+function cargarEnCotizador(i) {
+  var item = cotCola[i];
+  document.getElementById('cot_isbn').value   = '';
+  document.getElementById('cot_titulo').value = item.titulo;
+  document.getElementById('cot_autor').value  = item.autor;
+  // Marcar como cotizado
+  cotCola[i].cotizado = true;
+  renderCola();
+  // Hacer scroll al formulario y disparar búsqueda
+  document.getElementById('cot_isbn').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  setTimeout(cotizarLibro, 300);
+}
+
+async function cotizarTodaLaCola() {
+  var pendientes = cotCola.filter(function(c){ return !c.cotizado; });
+  if (!pendientes.length) { alert('Todos los libros ya fueron cotizados.'); return; }
+  if (!confirm('Se abrirán pestañas para ' + pendientes.length + ' libros. El navegador puede pedir permiso para popups. ¿Continuar?')) return;
+  var intv = parseInt(document.getElementById('cot_intervalo').value) * 1000;
+  for (var i = 0; i < cotCola.length; i++) {
+    if (cotCola[i].cotizado) continue;
+    document.getElementById('cot_titulo').value = cotCola[i].titulo;
+    document.getElementById('cot_autor').value  = cotCola[i].autor;
+    document.getElementById('cot_isbn').value   = '';
+    cotCola[i].cotizado = true;
+    renderCola();
+    await cotizarLibro();
+    if (i < cotCola.length - 1) await new Promise(function(r){ setTimeout(r, intv + 500); });
+  }
+}
+
+function limpiarCola() {
+  cotCola = [];
+  renderCola();
+}
+
+  var wrap = document.getElementById('cot_historial_wrap');
+  var list = document.getElementById('cot_historial_list');
+  if (!cotHistorial.length) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'block';
+  list.innerHTML = cotHistorial.map(function(h, i) {
+    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);">'
+      + '<span style="font-size:12.5px;color:var(--text);">' + escH(h.label || h.isbn) + (h.autor ? ' <span style="color:var(--muted);font-size:11px;">· '+escH(h.autor)+'</span>' : '') + '</span>'
+      + '<button onclick="cotizarDesdeHistorial('+i+')" style="font-size:11px;color:var(--accent);background:none;border:1px solid var(--border2);border-radius:5px;padding:3px 10px;cursor:pointer;">↻ Buscar</button>'
+      + '</div>';
+  }).join('');
+}
 </script>
 </body>
 </html>
